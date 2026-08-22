@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ==========================================================================
+   1. СОВРЕМЕННАЯ ПАЛИТРА И ШРИФТЫ (Inter / Linear Dark Theme)
+   ========================================================================== */
+:root, [data-md-color-scheme="slate"] {
+  /* Подключаем современный гротеск Inter */
+  --md-text-font:                 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --md-code-font:                 'JetBrains Mono', monospace;
+
+  /* Базовые цвета фона */
+  --md-default-bg-color:          #090d16;
+  --md-default-bg-color--light:   #111726;
+  --md-default-fg-color:          #cbd5e1; /* Мягкий основной текст (Slate-300) */
+  --md-default-fg-color--light:   #94a3b8;
+  --md-default-fg-color--faint:   rgba(255, 255, 255, 0.07);
+  
+  /* Акценты */
+  --md-accent-fg-color:           #818cf8;
+  --md-typeset-a-color:           #38bdf8;
+}
+
+body, .md-typeset {
+  font-family: var(--md-text-font);
+}
+
+/* Заголовки: сделали мягче (Slate-200 / Slate-300), чтобы не резали глаз */
+.md-typeset h1 {
+  color: #e2e8f0 !important;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.md-typeset h2, 
+.md-typeset h3 {
+  color: #cbd5e1 !important;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.md-typeset h2 {
+  border-bottom: 1px solid var(--md-default-fg-color--faint);
+  padding-bottom: 0.4rem;
+}
+
+/* ==========================================================================
+   2. ЛЕВАЯ ПАНЕЛЬ (Выделена плавающей карточкой)
+   ========================================================================== */
+@media screen and (min-width: 60em) {
+  .md-sidebar--primary .md-nav__title {
+    display: none;
+  }
+
+  .md-sidebar--primary .md-sidebar__scrollwrap {
+    background-color: rgba(17, 23, 38, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 0.8rem 0.5rem;
+    backdrop-filter: blur(8px);
+  }
+}
+
+.md-sidebar--primary .md-nav__link {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  border-radius: 6px;
+  margin: 2px 0;
+  padding: 0.4rem 0.6rem;
+  transition: all 0.15s ease-in-out;
+}
+
+.md-sidebar--primary .md-nav__link:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.md-sidebar--primary .md-nav__link--active {
+  color: #ffffff !important;
+  background: rgba(99, 102, 241, 0.15) !important;
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 #818cf8;
+}
+
+/* ==========================================================================
+   3. ПРАВАЯ ПАНЕЛЬ («На этой странице:»)
+   ========================================================================== */
+.md-sidebar--secondary .md-nav__title {
+  font-size: 0 !important;
+  padding: 0 0 0.5rem 0;
+}
+
+.md-sidebar--secondary .md-nav__title::after {
+  content: "На этой странице:";
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: none;
+  color: #899098;
+}
+
+.md-sidebar--secondary .md-nav__link {
+  font-size: 0.75rem;
+  color: #64748b;
+  transition: color 0.15s ease;
+}
+
+/* Подсветка срабатывает только при наведении мышью */
+.md-sidebar--secondary .md-nav__link:hover {
+  color: #cbd5e1;
+}
+
+/* Сброс автоматической подсветки активного пункта */
+.md-sidebar--secondary .md-nav__link--active {
+  color: #64748b !important;
+  font-weight: 400 !important;
+  text-shadow: none !important;
+}
+
+.md-sidebar--secondary .md-nav__link--active:hover {
+  color: #cbd5e1 !important;
+}
+
+/* ==========================================================================
+   4. ДЕТАЛИ И СТИЛИЗАЦИЯ БЛОКОВ
+   ========================================================================== */
+.md-typeset pre,
+.md-typeset .admonition {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}

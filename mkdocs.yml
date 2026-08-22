@@ -1,0 +1,33 @@
+site_name: Практический курс Docs as Code
+
+theme:
+  name: material
+  language: ru
+  palette:
+    scheme: slate # Тёмная тема
+    primary: indigo
+  features:
+    - content.code.copy # Включает кнопку копирования кода во всех блоках
+   # - toc.follow        # Подсвечивает и прокручивает активный раздел при скролле страницы
+   # - navigation.tracking # Синхронизация хэша (#anchor) в адресной строке
+
+nav:
+  - Введение: index.md
+  - Подготовка к курсу: prerequisites.md
+  - Модуль 1: module-1.md
+  - Модуль 2: module-2.md
+  - Модуль 3: module-3.md
+  - Модуль 4: module-4.md
+
+markdown_extensions:
+  - admonition                  # Блоки внимания (выноски)
+  - pymdownx.details            # Сворачиваемые блоки
+  - pymdownx.superfences        # Улучшенные блоки кода
+  - pymdownx.tabbed:            # Вкладки (tabs)
+      alternate_style: true
+  - tables                      # Поддержка таблиц
+  - toc:
+      permalink: true     # Добавляет иконку-ссылку (#) рядом с каждым заголовком
+
+extra_css:
+  - stylesheets/extra.css

@@ -28,7 +28,13 @@ markdown_extensions:
       alternate_style: true
   - tables                      # Поддержка таблиц
   - toc:
-      permalink: true     # Добавляет иконку-ссылку (#) рядом с каждым заголовком
+      permalink: "#"            # Добавляет иконку-ссылку (#) рядом с каждым заголовком
+  - attr_list # Позволяет задавать кастомные id, классы и атрибуты
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      #default_lang: bash
 
 extra_css:
   - stylesheets/extra.css

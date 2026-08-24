@@ -33,6 +33,7 @@ nav:
   - Модуль 2: module-2.md
   - Модуль 3: module-3.md
   - Модуль 4: module-4.md
+  - Чек-лист по итогам: takeaway.md
 
 markdown_extensions:
   - admonition                  # Блоки внимания (выноски)
@@ -52,3 +53,6 @@ markdown_extensions:
 
 extra_css:
   - stylesheets/extra.css
+
+hooks:
+  - hooks/generate_pdf.py

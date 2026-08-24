@@ -1,17 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* ==========================================================================
-   1. СОВРЕМЕННАЯ ПАЛИТРА И ШРИФТЫ (Inter / Linear Dark Theme)
+   1. БАЗОВЫЕ ШРИФТЫ И ОБЩИЕ СТИЛИ
    ========================================================================== */
-:root, [data-md-color-scheme="slate"] {
-  /* Подключаем современный гротеск Inter */
-  --md-text-font:                 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --md-code-font:                 'JetBrains Mono', monospace;
+:root {
+  --md-text-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --md-code-font: 'JetBrains Mono', monospace;
+}
 
-  /* Базовые цвета фона */
+body, .md-typeset {
+  font-family: var(--md-text-font);
+}
+
+/* ==========================================================================
+   2. ТЁМНАЯ ТЕМА (Slate)
+   ========================================================================== */
+[data-md-color-scheme="slate"] {
+  /* Цвета фона и текста */
   --md-default-bg-color:          #090d16;
   --md-default-bg-color--light:   #111726;
-  --md-default-fg-color:          #cbd5e1; /* Мягкий основной текст (Slate-300) */
+  --md-default-fg-color:          #cbd5e1; /* Slate-300 */
   --md-default-fg-color--light:   #94a3b8;
   --md-default-fg-color--faint:   rgba(255, 255, 255, 0.07);
   
@@ -20,20 +28,44 @@
   --md-typeset-a-color:           #38bdf8;
 }
 
-body, .md-typeset {
-  font-family: var(--md-text-font);
+/* Заголовки в тёмной теме */
+[data-md-color-scheme="slate"] .md-typeset h1 {
+  color: #e2e8f0;
+}
+[data-md-color-scheme="slate"] .md-typeset h2,
+[data-md-color-scheme="slate"] .md-typeset h3 {
+  color: #cbd5e1;
 }
 
-/* Заголовки: сделали мягче (Slate-200 / Slate-300), чтобы не резали глаз */
+/* Левая карточка-панель в тёмной теме */
+@media screen and (min-width: 60em) {
+  [data-md-color-scheme="slate"] .md-sidebar--primary .md-sidebar__scrollwrap {
+    background-color: rgba(17, 23, 38, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* ==========================================================================
+   3. СВЕТЛАЯ ТЕМА (Default)
+   ========================================================================== */
+[data-md-color-scheme="default"] .md-typeset h1 {
+  color: #0f172a; /* Глубокий тёмно-синий (Slate-900) */
+}
+[data-md-color-scheme="default"] .md-typeset h2,
+[data-md-color-scheme="default"] .md-typeset h3 {
+  color: #334155; /* Контрастный Slate-700 */
+}
+
+/* ==========================================================================
+   4. ОБЩАЯ СТИЛИЗАЦИЯ ЗАГОЛОВКОВ И ЭЛЕМЕНТОВ
+   ========================================================================== */
 .md-typeset h1 {
-  color: #e2e8f0 !important;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
 .md-typeset h2, 
 .md-typeset h3 {
-  color: #cbd5e1 !important;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
@@ -44,7 +76,7 @@ body, .md-typeset {
 }
 
 /* ==========================================================================
-   2. ЛЕВАЯ ПАНЕЛЬ (Выделена плавающей карточкой)
+   5. ЛЕВАЯ ПАНЕЛЬ (Навигация)
    ========================================================================== */
 @media screen and (min-width: 60em) {
   .md-sidebar--primary .md-nav__title {
@@ -52,8 +84,6 @@ body, .md-typeset {
   }
 
   .md-sidebar--primary .md-sidebar__scrollwrap {
-    background-color: rgba(17, 23, 38, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     padding: 0.8rem 0.5rem;
     backdrop-filter: blur(8px);
@@ -62,27 +92,20 @@ body, .md-typeset {
 
 .md-sidebar--primary .md-nav__link {
   font-size: 0.8rem;
-  color: #94a3b8;
   border-radius: 6px;
   margin: 2px 0;
   padding: 0.4rem 0.6rem;
   transition: all 0.15s ease-in-out;
 }
 
-.md-sidebar--primary .md-nav__link:hover {
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
 .md-sidebar--primary .md-nav__link--active {
-  color: #ffffff !important;
   background: rgba(99, 102, 241, 0.15) !important;
   font-weight: 600;
   box-shadow: inset 3px 0 0 #818cf8;
 }
 
 /* ==========================================================================
-   3. ПРАВАЯ ПАНЕЛЬ («На этой странице:»)
+   6. ПРАВАЯ ПАНЕЛЬ («На этой странице»)
    ========================================================================== */
 .md-sidebar--secondary .md-nav__title {
   font-size: 0 !important;
@@ -94,38 +117,25 @@ body, .md-typeset {
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: none;
-  color: #899098;
+  opacity: 0.7;
 }
 
 .md-sidebar--secondary .md-nav__link {
   font-size: 0.75rem;
-  color: #64748b;
   transition: color 0.15s ease;
 }
 
-/* Подсветка срабатывает только при наведении мышью */
-.md-sidebar--secondary .md-nav__link:hover {
-  color: #cbd5e1;
-}
-
-/* Сброс автоматической подсветки активного пункта */
+/* Сброс автоподсветки активного пункта в правом меню */
 .md-sidebar--secondary .md-nav__link--active {
-  color: #64748b !important;
   font-weight: 400 !important;
   text-shadow: none !important;
 }
 
-.md-sidebar--secondary .md-nav__link--active:hover {
-  color: #cbd5e1 !important;
-}
-
 /* ==========================================================================
-   4. ДЕТАЛИ И СТИЛИЗАЦИЯ БЛОКОВ
+   7. СТИЛИЗАЦИЯ БЛОКОВ
    ========================================================================== */
 .md-typeset pre,
 .md-typeset .admonition {
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--md-default-fg-color--faint);
 }
-
-

@@ -4,8 +4,22 @@ theme:
   name: material
   language: ru
   palette:
-    scheme: slate # Тёмная тема
-    primary: indigo
+# Настройки для светлой темы
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Переключить на тёмную тему
+
+    # Настройки для тёмной темы
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Переключить на светлую тему
+
   features:
     - content.code.copy # Включает кнопку копирования кода во всех блоках
    # - toc.follow        # Подсвечивает и прокручивает активный раздел при скролле страницы

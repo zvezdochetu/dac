@@ -1,4 +1,5 @@
 import os
+import sys
 from playwright.sync_api import sync_playwright
 
 CLEAN_PDF_CSS = """
@@ -163,36 +164,52 @@ body, .md-typeset {
 """
 
 def on_post_build(config):
-    site_dir = config['site_dir']
-    
-    html_path = os.path.join(site_dir, 'takeaway', 'index.html')
-    if not os.path.exists(html_path):
-        html_path = os.path.join(site_dir, 'takeaway.html')
-
-    if not os.path.exists(html_path):
-        print(f"[PDF Hook] Файл {html_path} не найден. Пропуск генерации PDF.")
+    if 'serve' in sys.argv:
+        print("[PDF Hook] Режим 'mkdocs serve' — генерация PDF пропущена.")
         return
 
-    pdf_path = os.path.join(os.path.dirname(html_path), 'takeaway.pdf')
+    site_dir = config['site_dir']
 
-    print(f"[PDF Hook] Генерация PDF: {html_path} -> {pdf_path}")
+    # Список страниц для конвертации: (относительный путь HTML, имя PDF)
+    TARGET_PAGES = [
+        ("takeaway/index.html", "takeaway.pdf"),
+        ("cheatsheet/index.html", "cheatsheet.pdf"), # Ваш новый файл
+    ]
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
-        page.goto(f"file://{os.path.abspath(html_path)}")
-        page.add_style_tag(content=CLEAN_PDF_CSS)
-        page.pdf(
-            path=pdf_path,
-            format="A4",
-            margin={
-                "top": "20mm",
-                "bottom": "20mm",
-                "left": "20mm",
-                "right": "20mm"
-            },
-            print_background=True
-        )
+
+        for rel_html_path, pdf_filename in TARGET_PAGES:
+            html_path = os.path.join(site_dir, rel_html_path)
+
+            # Проверка альтернативного пути (если MkDocs скомпилировал файл как page.html, а не page/index.html)
+            if not os.path.exists(html_path):
+                fallback_path = rel_html_path.replace('/index.html', '.html')
+                html_path = os.path.join(site_dir, fallback_path)
+
+            if not os.path.exists(html_path):
+                print(f"[PDF Hook] Файл {html_path} не найден. Пропуск.")
+                continue
+
+            pdf_path = os.path.join(os.path.dirname(html_path), pdf_filename)
+            print(f"[PDF Hook] Генерация PDF: {html_path} -> {pdf_path}")
+
+            page = browser.new_page()
+            page.goto(f"file://{os.path.abspath(html_path)}")
+            page.add_style_tag(content=CLEAN_PDF_CSS)
+            page.pdf(
+                path=pdf_path,
+                format="A4",
+                margin={
+                    "top": "20mm",
+                    "bottom": "20mm",
+                    "left": "20mm",
+                    "right": "20mm"
+                },
+                print_background=True
+            )
+            page.close()
+
         browser.close()
 
-    print("[PDF Hook] PDF успешно создан!")
+    print("[PDF Hook] Все PDF успешно созданы!")

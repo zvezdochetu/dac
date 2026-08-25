@@ -1,24 +1,147 @@
 # Подготовка и настройка
 
+!!! tip "Совет"
+
+    В случае любых затруднений в настройке смело пишите в телеграм-чат курса или [Василию в личку](https://t.me/zvezdochetu) :)
+
 ## Подготовка окружения { #env }
 
-Тест вкладок:
+1. [Скачайте](https://git-scm.com/install/windows) и установите Git.
 
-=== "Windows (PowerShell)"
+1. [Скачайте](https://code.visualstudio.com/download) и установите VS Code.
 
-    ```powershell
-    cd docker-docs-course
+1. [Скачайте](https://nodejs.org/en/download) и установите Node.js и npm.
+
+    ??? Info "Простая инструкция для Windows"
+
+        1. На странице [https://nodejs.org/en/download](https://nodejs.org/en/download) прокрутите вниз и нажмите кнопку **Windows Installer (.msi)**.
+        
+        1. Запустите скачанный файл.
+
+        1. В мастере установки убедитесь, что выбраны опции установки npm и добавления в системный путь (**Add to PATH**).
+        
+    Проверьте корректность установки:
+    
+    1. Откройте VS Code.
+    1. Если внизу окна нет терминала, откройте его (меню **Terminal -> New Terminal**).
+    1. Выполните в терминале команду:
+    
+        ```
+        node -v
+        ```
+
+        Затем выполните команду:
+        
+        ```
+        npm -v
+        ```
+
+        Если в обоих случаях отображается версия (цифры и точки), установка прошла корректно.
+
+1. [Создайте аккаунт на GitHub](https://github.com/signup).
+
+1. Пришлите имя созданного аккаунта GitHub в телеграм-чат курса или [Василию в личку](https://t.me/zvezdochetu).
+
+1. [Сгенерируйте SSH-ключ](https://docs.github.com/ru/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) и [добавьте его в свой аккаунт GitHub](https://docs.github.com/ru/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
+
+    ??? Info "Простая инструкция для Windows"
+
+        1. В терминале выполните команду:
+
+            ```
+            ssh-keygen -t ed25519 -C "<ваш_email>"
+            ```
+            
+            Где `<ваш_email>` — адрес электронной почты, указанный при создании аккаунта GitHub.
+
+            На возникающие вопросы нажимайте **Enter** (пропустите выбор пути и создание пароля).
+
+        1. Откройте папку `.ssh`, путь до которой написан сразу после фразы `Enter file in which to save the key` (пролистайте терминал чуть выше). Например: `C:\Users\User\.ssh\`.
+        
+        1. В папке `.ssh` найдите и откройте файл публичного ключа `id_ed25519.pub` с помощью VS Code.
+
+            !!! warning "Обратите внимание на правильное расширение файла"
+
+        1. Скопируйте все содержимое файла (`Ctrl+A`, затем `Ctrl+C`).
+        
+        1. Перейдите на [страницу добавления ключа на GitHub](https://github.com/settings/ssh/new).
+
+        1. В поле **Title** введите понятное название (например, `My Laptop`).
+
+        1. В поле **Key** вставьте скопированный публичный ключ и нажмите **Add SSH key**.
+
+    Чтобы убедиться, что все настроено верно, выполните в терминале:
+
+    ```
+    ssh -T git@github.com
     ```
 
-=== "Linux / macOS (Bash)"
-
-    ```bash
-    cd docker-docs-course
-    ```
+    Если в ответ пришло сообщение `Hi ...! You've successfully authenticated...` — ключ успешно добавлен.
 
 ## Подготовка файлов для сайта-визитки
 
-## Создание проекта VitePress
+
+
+## Создание проекта сайта-визитки на VitePress
+
+Перед созданием проекта VitePress [подготовьте окружение](#env).
+
+Чтобы создать новый проект VitePress:
+
+1. В удобном месте на диске создайте папку `my-site`, например `C:\my-site`.
+
+1. Откройте VS Code.
+
+1. Откройте папку `my-site` в VS Code (меню **File -> Open Folder**).
+
+1. Если внизу окна нет терминала, откройте его (меню **Terminal -> New Terminal**).
+
+    Если появится предупреждающее сообщение, нажмите кнопку **Trust Folder...**.
+
+1. Проверьте, что терминал указывает на папку `my-site`, например `C:\my-site>`.
+
+1. Выполните в терминале:
+
+    ```
+    npm init -y
+    ```
+
+1. Выполните в терминале:
+
+    ```
+    npm install -D vitepress
+    ```
+
+1. Выполните в терминале:
+
+    ```
+    npx vitepress init
+    ```
+
+    На пятый вопрос мастера настройки (`Use TypeScript for config and theme files?`) ответьте **No**.
+    На остальные вопросы нажимайте **Enter**.
+
+Чтобы проверить корректность установки, выполните в терминале:
+
+```
+npm run docs:dev
+```
+
+Если установка прошла успешно, вы увидите:
+
+```
+> my-site@1.0.0 docs:dev
+> vitepress dev
+
+
+vitepress v1.6.4
+
+➜  Local:   http://localhost:5173/
+➜  Network: use --host to expose
+➜  press h to show help
+```
+
+Нажмите **Ctrl+C**, чтобы завершить запущенный в терминале процесс.
 
 ## Клонирование репозитория docker-docs-course { #clone }
 
@@ -27,7 +150,7 @@
 Чтобы склонировать репозиторий docker-docs-course:
 
 1. В удобном месте на диске создайте папку `dac`, например `C:\dac`.
-1. Откройте новое окно vscode.
+1. Откройте VS Code.
 1. Откройте папку `dac` в vscode (меню **File -> Open Folder**).
 1. Если внизу окна нет терминала, откройте его (меню **Terminal -> New Terminal**).
 1. Проверьте, что терминал указывает на папку `dac`, например `C:\dac>`.

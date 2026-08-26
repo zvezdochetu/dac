@@ -34,6 +34,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.YANDEX_S3_SECRET_KEY }}
           AWS_DEFAULT_REGION: ru-central1
         run: |
-          aws s3 sync ./site s3://ИМЯ_ВАШЕГО_БАКЕТА/ \
+          aws s3 sync ./site s3://dac.documentat.io/ \
             --endpoint-url https://storage.yandexcloud.net \
             --delete

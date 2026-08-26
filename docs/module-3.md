@@ -79,7 +79,9 @@
 
 1. Откройте в VS Code два md-файла, из которых собираются страницы [Docker Build Cloud setup](https://zvezdochetu.github.io/docker-docs-course/build-cloud/setup/) и [Uninstall Docker Desktop](https://zvezdochetu.github.io/docker-docs-course/desktop/uninstall/). Для этого используйте строку Command Center.
 
-1. Измените открытые файлы `content\manuals\build-cloud\setup.md` и `content\manuals\desktop\uninstall.md` и сохраните изменения.
+1. В открытом файле `content\manuals\build-cloud\setup.md` **измените 18-ю строку** (например, удалите один символ или удалите строку целиком). Сохраните файл.
+
+1. В открытом файле `content\manuals\desktop\uninstall.md` внесите любую правку и сохраните файл.
 
 1. Проверьте, как изменилось состояние Git (`git status`).
 
@@ -170,9 +172,34 @@
 
 ## Практика 3: создание коммита
 
+Создайте коммит:
 
+1. Как обычно, сначала проверьте состояние Git:
 
+    ```
+    git status
+    ```
 
+1. Создайте коммит:
+
+    ```
+    git commit -m "test: intentionally change line 18"
+    ```
+
+1. Еще раз проверьте состояние Git:
+
+    ```
+    git status
+    ```
+
+    Результат: 
+    ```
+    On branch main
+    Your branch is ahead of 'origin/main' by 1 commit.
+    (use "git push" to publish your local commits)
+
+    nothing to commit, working tree clean
+    ```
 
 **Шпаргалка по командам:**
 
@@ -202,18 +229,72 @@
 
 ## Практика 4: история коммитов
 
+1. В интерфейсе VS Code перейдите на вкладку Source Control.
 
+1. Посмотрите вниз — там находится вся история коммитов.
 
+1. Наведите мышь на коммит, чтобы увидеть краткую сводку по нему.
 
+1. Нажмите по коммиту — откроется список всех добавленных в него файлов.
 
-
-**Шпаргалка по командам:**
+    Нажмите на любой файл из списка, чтобы сравнить версии и увидеть каждое изменение строчка за строчкой.
 
 ## Практика 5: работа с ветками
 
+1. Удалите коммит из текущей ветки (все изменения в коммите вернутся на стейдж):
 
+    ```
+    git reset --soft HEAD~1
+    ```
 
+1. Проверьте, что вы на ветке `main`, на стейдже есть файл `content\manuals\build-cloud\setup.md` и новых коммитов нет:
 
+    ```
+    git status
+    ```
+
+1. Создайте новую ветку с именем `test/<ваша фамилия>`:
+
+    ```
+    git switch -c test/<ваша фамилия>
+    ```
+
+1. Проверьте, что вы на новой ветке (`git status`).
+
+1. Создайте коммит:
+
+    ```
+    git commit -m "test: intentionally change line 18"
+    ```
+
+1. Переключитесь обратно на ветку `main`:
+
+    ```
+    git switch -
+    ```
+    или 
+    ```
+    git switch main
+    ```
+
+1. Проверьте, что вы на ветке `main`, стейдж чист, а новых коммитов в ней нет (`git status`).
+
+1. Переключитесь обратно на ветку `test/<ваша фамилия>`:
+
+    ```
+    git switch -
+    ```
+    или 
+    ```
+    git switch test/<ваша фамилия>
+    ```
+
+1. Убедитесь (`git status`), что вы на новой ветке:
+               
+    ```
+    On branch test/<ваша фамилия>
+    nothing to commit, working tree clean
+    ```
 
 **Шпаргалка по командам:**
 
@@ -274,8 +355,31 @@
 
 ## Практика 6: отправка изменений на сервер
 
+1. Убедитесь (`git status`), что вы на новой ветке.
 
+1. Выполните:
 
+    ```
+    git push
+    ```
+
+    результат:
+
+    ```
+    fatal: The current branch test/<ваша фамилия> has no upstream branch.
+    To push the current branch and set the remote as upstream, use
+
+        git push --set-upstream origin test/<ваша фамилия>
+
+    To have this happen automatically for branches without a tracking
+    upstream, see 'push.autoSetupRemote' in 'git help config'.
+    ```
+
+1. Выполните:
+
+    ```
+    git push --set-upstream origin test/<ваша фамилия>
+    ```
 
 **Шпаргалка по командам:**
 
@@ -300,8 +404,6 @@
     ```
 
 ## Практика 7: разрешение конфликта слияния
-
-
 
 
 

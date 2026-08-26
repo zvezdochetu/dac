@@ -1,0 +1,43 @@
+name: Build MkDocs and Deploy to Yandex S3
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      # 1. Сборка сайта MkDocs
+      - name: Install dependencies & Build MkDocs
+        run: |
+          pip install mkdocs-material playwright
+          python -m playwright install chromium
+          mkdocs build
+
+      # 2. Настройка ключей AWS CLI для работы с Yandex Cloud
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.YANDEX_S3_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.YANDEX_S3_SECRET_KEY }}
+          aws-region: ru-central1
+
+      # 3. Загрузка папки site/ в S3-бакет Яндекса
+      - name: Sync site to Yandex Object Storage
+        run: |
+          aws s3 sync ./site s3://dac.documentat.io/ \
+            --endpoint-url https://storage.yandexcloud.net \
+            --delete

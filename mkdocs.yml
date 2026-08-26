@@ -27,8 +27,8 @@ theme:
 
 nav:
   - Введение: index.md
-  - Шпаргалка: cheatsheet.md
-  - Подготовка и настройка: prerequisites.md
+  - Подготовка к курсу: prerequisites.md
+  - Шпаргалки: cheatsheet.md
 #  - Модуль 1: module-1.md
 #  - Модуль 2: module-2.md
 #  - Модуль 3: module-3.md

@@ -1,4 +1,4 @@
-name: Build MkDocs and Deploy to Yandex S3
+name: Build MkDocs and Deploy to Yandex S3 & GitHub Pages
 
 on:
   push:
@@ -6,8 +6,19 @@ on:
       - main
   workflow_dispatch:
 
+# Права для публикации на GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Разрешаем только один параллельный деплой на Pages
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
 jobs:
-  build-and-deploy:
+  build-and-s3:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,7 +29,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-        #  cache: 'pip'
 
       # 1. Сборка сайта MkDocs
       - name: Install dependencies & Build MkDocs
@@ -38,9 +48,20 @@ jobs:
             --endpoint-url https://storage.yandexcloud.net \
             --delete
 
-      # 3. Публикация на GitHub Pages
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      # 3. Сохраняем артефакт для GitHub Pages
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./site
+          path: './site'
+
+  deploy-pages:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build-and-s3
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -82,9 +82,9 @@
 
 1. Откройте в VS Code два md-файла, из которых собираются страницы [Docker Build Cloud setup](https://zvezdochetu.github.io/docker-docs-course/build-cloud/setup/) и [Uninstall Docker Desktop](https://zvezdochetu.github.io/docker-docs-course/desktop/uninstall/). Для этого используйте строку Command Center.
 
-1. В открытом файле `content\manuals\build-cloud\setup.md` на 18-й строке измените версию на **4.29.0**. Сохраните файл.
+1. В открытом файле `content/manuals/build-cloud/setup.md` на 18-й строке измените версию на **4.29.0**. Сохраните файл.
 
-1. В открытом файле `content\manuals\desktop\uninstall.md` внесите любую правку и сохраните файл.
+1. В открытом файле `content/manuals/desktop/uninstall.md` внесите любую правку и сохраните файл.
 
 1. Проверьте, как изменилось состояние Git (`git status`).
 
@@ -99,7 +99,7 @@
 1. Удалите файл `uninstall.md` со стейджа:
 
     ```
-    git restore --staged content\manuals\desktop\uninstall.md
+    git restore --staged content/manuals/desktop/uninstall.md
     ```
 
 1. И опять проверьте состояние Git :)
@@ -107,7 +107,7 @@
 1. Откатите изменения в файле `uninstall.md`:
 
     ```
-    git restore content\manuals\desktop\uninstall.md
+    git restore content/manuals/desktop/uninstall.md
     ```
 
 1. Ну и как обычно, проверьте состояние Git :)
@@ -250,7 +250,7 @@
     git reset --soft HEAD~1
     ```
 
-1. Проверьте, что вы на ветке `main`, на стейдже есть файл `content\manuals\build-cloud\setup.md` и новых коммитов нет:
+1. Проверьте, что вы на ветке `main`, на стейдже есть файл `content/manuals/build-cloud/setup.md` и новых коммитов нет:
 
     ```
     git status
@@ -288,7 +288,7 @@
 
 1. Проверьте, что вы на ветке `main`, стейдж чист, а новых коммитов в ней нет (`git status`).
 
-1. Проверьте, что файл `content\manuals\build-cloud\setup.md` в ветке `main` не содержит изменений.
+1. Проверьте, что файл `content/manuals/build-cloud/setup.md` в ветке `main` не содержит изменений.
 
 1. Переключитесь обратно на ветку `test/<имя_аккаунта>`:
 
@@ -432,7 +432,7 @@
     git pull origin main
     ```
 
-1. Разрешите конфликт слияния в файле `content\manuals\build-cloud\setup.md` и сохраните файл.
+1. Разрешите конфликт слияния в файле `content/manuals/build-cloud/setup.md` и сохраните файл.
 
     !!! tip "Совет"
 
@@ -445,7 +445,7 @@
 1. Добавьте файл на стейдж:
 
     ```
-    git add content\manuals\build-cloud\setup.md
+    git add content/manuals/build-cloud/setup.md
     ```
 
 1. Сделайте коммит:

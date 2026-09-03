@@ -82,7 +82,7 @@
 
 1. Откройте в VS Code два md-файла, из которых собираются страницы [Docker Build Cloud setup](https://zvezdochetu.github.io/docker-docs-course/build-cloud/setup/) и [Uninstall Docker Desktop](https://zvezdochetu.github.io/docker-docs-course/desktop/uninstall/). Для этого используйте строку Command Center.
 
-1. В открытом файле `content\manuals\build-cloud\setup.md` **измените 18-ю строку** (например, удалите один символ или удалите строку целиком). Сохраните файл.
+1. В открытом файле `content\manuals\build-cloud\setup.md` на 18-й строке измените версию на **4.29.0**. Сохраните файл.
 
 1. В открытом файле `content\manuals\desktop\uninstall.md` внесите любую правку и сохраните файл.
 
@@ -186,7 +186,7 @@
 1. Создайте коммит:
 
     ```
-    git commit -m "test: intentionally change line 18"
+    git commit -m "test: change docker version"
     ```
 
 1. Еще раз проверьте состояние Git:
@@ -262,10 +262,10 @@
     git pull
     ```
 
-1. Создайте новую ветку с именем `test/<ваша фамилия>`:
+1. Создайте новую ветку с именем `test/<имя_аккаунта>`:
 
     ```
-    git switch -c test/<ваша фамилия>
+    git switch -c test/<вимя_аккаунта>
     ```
 
 1. Проверьте, что вы на новой ветке (`git status`).
@@ -273,7 +273,7 @@
 1. Создайте коммит:
 
     ```
-    git commit -m "test: intentionally change line 18"
+    git commit -m "test: change docker version"
     ```
 
 1. Переключитесь обратно на ветку `main`:
@@ -290,20 +290,20 @@
 
 1. Проверьте, что файл `content\manuals\build-cloud\setup.md` в ветке `main` не содержит изменений.
 
-1. Переключитесь обратно на ветку `test/<ваша фамилия>`:
+1. Переключитесь обратно на ветку `test/<имя_аккаунта>`:
 
     ```
     git switch -
     ```
     или 
     ```
-    git switch test/<ваша фамилия>
+    git switch test/<имя_аккаунта>
     ```
 
 1. Убедитесь (`git status`), что вы на новой ветке:
                
     ```
-    On branch test/<ваша фамилия>
+    On branch test/<имя_аккаунта>
     nothing to commit, working tree clean
     ```
 
@@ -381,10 +381,10 @@
     результат:
 
     ```
-    fatal: The current branch test/<ваша фамилия> has no upstream branch.
+    fatal: The current branch test/<имя_аккаунта> has no upstream branch.
     To push the current branch and set the remote as upstream, use
 
-        git push --set-upstream origin test/<ваша фамилия>
+        git push --set-upstream origin test/<имя_аккаунта>
 
     To have this happen automatically for branches without a tracking
     upstream, see 'push.autoSetupRemote' in 'git help config'.
@@ -393,7 +393,7 @@
 1. Выполните:
 
     ```
-    git push --set-upstream origin test/<ваша фамилия>
+    git push --set-upstream origin test/<имя_аккаунта>
     ```
 
 **Шпаргалка по командам:**
@@ -420,9 +420,45 @@
 
 ## Практика 7: разрешение конфликта слияния
 
+1. Переключитесь на вашу ветку:
 
+    ```
+    git switch test/<имя_аккаунта>
+    ```
 
-**Шпаргалка по командам:**
+1. Принесите изменения с удаленной ветки `main`:
+
+    ```
+    git pull origin main
+    ```
+
+1. Разрешите конфликт слияния в файле `content\manuals\build-cloud\setup.md` и сохраните файл.
+
+    !!! tip "Совет"
+
+        Если требуется отменить слияние, выполните:
+
+        ```
+        git merge --abort
+        ```
+
+1. Добавьте файл на стейдж:
+
+    ```
+    git add content\manuals\build-cloud\setup.md
+    ```
+
+1. Сделайте коммит:
+
+    ```
+    git commit -m "merge main"
+    ```
+
+1. Оправьте изменения на сервер:
+
+    ```
+    git push
+    ```
 
 ## Важные замечания
 

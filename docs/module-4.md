@@ -46,7 +46,7 @@
 
 ## 3. Первичные изменения и стартовый коммит
 
-1. Внесите изменения, достаточные для первого коммита.
+1. Внесите изменения в локальной ветке, достаточные для первого коммита.
 
 1. Отправьте изменения на сервер.
 
@@ -60,7 +60,7 @@
 
     1. **Title** — кратко опишите суть изменений по-английски.
 
-    1. **Description** — удалите стандартный шаблон описания и добавьте пока только одну строчку `Closes #<номер_issue>`.
+    1. **Description** — удалите стандартный шаблон описания и добавьте пока только одну строчку: `Closes #<номер_issue>`.
 
     1. **Assignee** — выберите себя.
 
@@ -70,9 +70,9 @@
 
 ## Запуск сборки превью и проверки Vale
 
-1. Напишите 
+1. Добавьте комментарий `/vale`.
 
-1. Перейдите
+1. Добавьте комментарий `/preview` и проверьте, что статья выглядит верно на превью-сборке.
 
 ## Завершите изменения по задаче
 
@@ -84,21 +84,110 @@
 
 1. Откройте ваш PR и просмотрите изменения, которые вы внесли, на вкладке **Files Changed**.
 
-1. Еще раз запустите сборку (`/preview`). Проверьте, что превью-сборка открывается по ссылке и в отчете Vale нет предупреждений.
+1. Если вы меняли что-то с момента создания PR, еще раз запустите сборку (`/preview`) и проверку (`/vale`). Проверьте, что превью-сборка открывается по ссылке и в отчете Vale нет предупреждений.
 
-1. Добавьте к 
+1. Добавьте к PR описание:
+    * Что конкретно сделано.
+    * Ссылку, по которой можно посмотреть превью статьи.
 
-1. Внизу окна PR нажмите серую кнопку Ready for review.
+1. Внизу окна PR нажмите серую кнопку **Ready for review**.
 
-1. Попросите тимлида поревьюить.
+1. Если тимлид не начнет ревью в течение 5 минут, напишите ему в телеграм-чате.
 
 ## Прохождение Code Review
 
-## Вливание PR и автоматическое закрытие Issue
+Посмотрите результаты ревью.
 
-## Важные замечания ---TODO---
+## Разрешение конфликтов
 
-Что можно упомянуть дополнительно:
-* githook, расширения VS Code и локально запускаемые линтеры.
-* Обязательная сборка проекта локально перед отправкой изменений на сервер.
-* Большое количество разных плагинов для VS Code, которые упрощают работу с Git/GitHub.
+Если вы видите внизу окна PR сообщение *This branch has conflicts that must be resolved*, разрешите конфликт:
+
+1. Переключитесь на вашу ветку.
+
+1. Выполните команду:
+
+    ```
+    git pull origin main
+    ```
+
+1. Разрешите конфликт слияния.
+
+1. Если вы выполнили слияние неверно, но еще не закоммитили изменения, выполните:
+
+    ```
+    git merge --abort
+    ```
+
+    Далее начните слияние заново.
+
+1. Создайте коммит и отправьте изменения на сервер.
+
+## Открытые проекты для получения первого опыта
+
+### Canonical Open Documentation Academy (reST)
+
+Безусловный фаворит: много понятно оформленных задач для новичков, открытое дружелюбное сообщество. 
+
+Сайт проекта: <https://canonical.com/documentation/open-documentation-academy>
+
+Issues: <https://github.com/canonical/open-documentation-academy/issues>
+
+### MDN Web Docs (Markdown)
+
+Сайт проекта: <https://developer.mozilla.org/>
+
+Правила контрибьюта: <https://github.com/mdn/content/blob/main/CONTRIBUTING.md>
+
+Issues: <https://github.com/mdn/content/issues>
+
+### Cloud Native Glossary (Markdown)
+
+Сайт проекта: <https://glossary.cncf.io/>
+
+Правила контрибьюта: <https://github.com/cncf/glossary/blob/main/CONTRIBUTING.md>
+
+Issues: <https://github.com/cncf/glossary/issues>
+
+### Документация Яндекс Клауд (Markdown)
+
+**Минусы:** задачи придется искать самому.
+
+**Плюсы:** всё на русском, огромное количество сервисов и такое же огромное поле для работы.
+
+Сайт проекта: <https://yandex.cloud/ru/content-program>
+
+Issues: <https://github.com/canonical/open-documentation-academy/issues>
+
+### GitHub (Markdown)
+
+Сайт проекта: <https://github.com/>
+
+Правила контрибьюта: <https://github.com/github/docs/blob/main/.github/CONTRIBUTING.md>
+
+Issues: <https://github.com/github/docs/issues>
+
+### Ethereum website (Markdown)
+
+Сайт проекта: <https://ethereum.org/>
+
+Правила контрибьюта: <https://ethereum.org/contributing/>
+
+Issues: <https://github.com/ethereum/ethereum-org-website/issues>
+
+### Nextcloud (Markdown)
+
+Сайт проекта: <https://nextcloud.com/>
+
+Правила контрибьюта: <https://github.com/nextcloud/documentation/blob/master/CONTRIBUTING.md>
+
+Issues: <https://github.com/nextcloud/documentation/issues>
+
+### Fedora (AsciiDoc)
+
+Если хочется получить опыт работы с AsciiDoc, а также отдельной forge-системой (Fedora Forge) вместо GitHub.
+
+Сайт проекта: <https://fedoraproject.org/>
+
+Правила контрибьюта: <https://docs.fedoraproject.org/en-US/fedora-docs/contributing-docs/>
+
+Issues: <https://forge.fedoraproject.org/docs/tickets/issues>

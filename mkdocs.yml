@@ -32,7 +32,7 @@ nav:
   - Модуль 1: module-1.md
   - Модуль 2: module-2.md
   - Модуль 3: module-3.md
-#  - Модуль 4: module-4.md
+  - Модуль 4: module-4.md
 #  - Чек-лист по итогам: takeaway.md
 
 markdown_extensions:

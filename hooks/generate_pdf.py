@@ -1,5 +1,7 @@
 import os
 import sys
+import threading
+from http.server import SimpleHTTPRequestHandler, HTTPServer
 from playwright.sync_api import sync_playwright
 
 CLEAN_PDF_CSS = """
@@ -25,17 +27,25 @@ CLEAN_PDF_CSS = """
 /* 3. СТИЛИЗАЦИЯ ОГЛАВЛЕНИЯ [TOC] */
 .pdf-only,
 h2.pdf-only {
-    margin-top: 1.5em !important;
-    margin-bottom: 0.6em !important;
-    font-size: 13pt !important;
+    display: block !important;
+    margin-top: 40px !important;    
+    margin-bottom: 20px !important; 
+    font-size: 14pt !important;
+    padding-left: 5px !important; /* Легкий сдвиг самого слова "Оглавление" вправо */
 }
 
+.md-content__inner .toc,
 .md-typeset .toc {
+    display: block !important;
     background-color: #f8fafc !important;
     border: 1px solid #e2e8f0 !important;
     border-radius: 6px !important;
-    padding: 18px 24px !important;
-    margin: 0.8em 0 2em 0 !important;
+    
+    /* ТАКЖЕ увеличиваем общий padding рамки (вверх, право, низ, лево) */
+    padding: 24px 28px 24px 35px !important; 
+    
+    margin-top: 20px !important;   
+    margin-bottom: 50px !important; 
 }
 
 /* Скрываем заголовок H1 из оглавления */
@@ -43,17 +53,18 @@ h2.pdf-only {
     display: none !important;
 }
 
-/* Обнуляем левый сдвиг у списков */
-.md-typeset .toc ul,
-.md-typeset .toc li {
-    padding-left: 0 !important;
+/* ГАРАНТИРОВАННО СДВИГАЕМ СПИСОК ВПРАВО ОТ ЛЕВОГО КРАЯ/БЛОКА */
+.md-typeset .toc ul {
+    padding-left: 15px !important; /* Вот этот параметр отодвинет весь текст вправо */
     margin-left: 0 !important;
     list-style-type: none !important;
-    list-style-image: none !important;
 }
 
 .md-typeset .toc li {
-    margin-bottom: 8px !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+    margin-bottom: 10px !important; 
+    list-style-type: none !important;
 }
 
 .md-typeset .toc li:last-child {
@@ -62,7 +73,7 @@ h2.pdf-only {
 
 .md-typeset .toc a {
     color: #334155 !important;
-    font-size: 10.5pt !important;
+    font-size: 11pt !important;
     text-decoration: none !important;
 }
 
@@ -104,19 +115,19 @@ h2.pdf-only {
     cursor: default !important;
 }
 
-/* 6. БАЗОВАЯ ТИПОГРАФИКА И ВЕРСТКА */
+/* 6. БАЗОВАЯ ТИПОГРАФИКА И ВЕРСТКА (Инженерный стиль Fira) */
 body, .md-typeset {
-    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif !important;
-    font-size: 10.5pt !important;
+    /* Если в системе есть Fira Sans — берем его, если нет — чистый современный системный шрифт */
+    font-family: "Fira Sans", "Segoe UI", system-ui, -apple-system, sans-serif !important;
+    font-size: 10.5pt !important; 
     line-height: 1.6 !important;
     color: #1e293b !important;
 }
 
-.md-main__inner, .md-content {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    max-width: none !important;
+.md-typeset h1, .md-typeset h2, .md-typeset h3 {
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    letter-spacing: -0.01em !important;
 }
 
 /* 7. ИНЛАЙН-КОД */
@@ -126,36 +137,15 @@ body, .md-typeset {
     border: 1px solid #e2e8f0 !important;
     border-radius: 4px !important;
     padding: 2px 6px !important;
-    font-family: Consolas, "Courier New", monospace !important;
-    font-size: 0.88em !important;
+    font-family: "Fira Code", Consolas, Monaco, monospace !important;
+    font-size: 0.85em !important;
 }
 
 /* 8. БЛОКИ КОДА */
-.md-typeset .highlight pre,
-.md-typeset .highlight code,
-.md-typeset .highlight span,
-.md-typeset pre > code {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-.md-typeset .highlight,
-.md-typeset pre:not(.highlight pre) {
-    background-color: #f8fafc !important;
-    border: 1px solid #cbd5e1 !important;
-    border-radius: 6px !important;
-    padding: 10px 14px !important;
-    margin: 0.8em 0 !important;
-    display: block !important;
-}
-
 .md-typeset .highlight code,
 .md-typeset pre code {
-    font-family: Consolas, "Courier New", monospace !important;
-    font-size: 0.9em !important;
+    font-family: "Fira Code", Consolas, Monaco, monospace !important;
+    font-size: 0.85em !important;
     line-height: 1.5 !important;
     color: #0f172a !important;
     white-space: pre-wrap !important;
@@ -163,53 +153,120 @@ body, .md-typeset {
 }
 """
 
+class TargetDirectoryHTTPRequestHandler(SimpleHTTPRequestHandler):
+    def __init__(self, *args, directory=None, **kwargs):
+        self.target_dir = directory
+        super().__init__(*args, **kwargs)
+
+    def translate_path(self, path):
+        path = super().translate_path(path)
+        rel_path = os.path.relpath(path, os.getcwd())
+        return os.path.join(self.target_dir, rel_path)
+
+    def log_message(self, format, *args):
+        pass
+
+def run_temporary_server(site_dir, port):
+    handler = lambda *args, **kwargs: TargetDirectoryHTTPRequestHandler(*args, directory=site_dir, **kwargs)
+    server = HTTPServer(('127.0.0.1', port), handler)
+    server.serve_forever()
+
 def on_post_build(config):
     if 'serve' in sys.argv:
         print("[PDF Hook] Режим 'mkdocs serve' — генерация PDF пропущена.")
         return
 
-    site_dir = config['site_dir']
+    site_dir = os.path.abspath(config['site_dir'])
+    PORT = 8555
+    
+    server_thread = threading.Thread(
+        target=run_temporary_server, 
+        args=(site_dir, PORT), 
+        daemon=True
+    )
+    server_thread.start()
 
-    # Список страниц для конвертации: (относительный путь HTML, имя PDF)
     TARGET_PAGES = [
         ("takeaway/index.html", "takeaway.pdf"),
-        ("cheatsheet/index.html", "cheatsheet.pdf"), # Ваш новый файл
+        ("cheatsheet/index.html", "cheatsheet.pdf"), 
     ]
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-
-        for rel_html_path, pdf_filename in TARGET_PAGES:
-            html_path = os.path.join(site_dir, rel_html_path)
-
-            # Проверка альтернативного пути (если MkDocs скомпилировал файл как page.html, а не page/index.html)
-            if not os.path.exists(html_path):
-                fallback_path = rel_html_path.replace('/index.html', '.html')
-                html_path = os.path.join(site_dir, fallback_path)
-
-            if not os.path.exists(html_path):
-                print(f"[PDF Hook] Файл {html_path} не найден. Пропуск.")
-                continue
-
-            pdf_path = os.path.join(os.path.dirname(html_path), pdf_filename)
-            print(f"[PDF Hook] Генерация PDF: {html_path} -> {pdf_path}")
-
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
             page = browser.new_page()
-            page.goto(f"file://{os.path.abspath(html_path)}")
-            page.add_style_tag(content=CLEAN_PDF_CSS)
-            page.pdf(
-                path=pdf_path,
-                format="A4",
-                margin={
-                    "top": "20mm",
-                    "bottom": "20mm",
-                    "left": "20mm",
-                    "right": "20mm"
-                },
-                print_background=True
-            )
-            page.close()
 
-        browser.close()
+            for rel_html_path, pdf_filename in TARGET_PAGES:
+                html_path = os.path.join(site_dir, rel_html_path)
+                url_path = rel_html_path
 
-    print("[PDF Hook] Все PDF успешно созданы!")
+                if not os.path.exists(html_path):
+                    fallback_path = rel_html_path.replace('/index.html', '.html')
+                    if os.path.exists(os.path.join(site_dir, fallback_path)):
+                        html_path = os.path.join(site_dir, fallback_path)
+                        url_path = fallback_path
+                    else:
+                        print(f"[PDF Hook] Файл {html_path} не найден. Пропуск.")
+                        continue
+
+                pdf_path = os.path.join(os.path.dirname(html_path), pdf_filename)
+                clean_url = url_path.lstrip('/')
+                server_url = f"http://127.0.0.1:{PORT}/{clean_url}"
+                
+                print(f"[PDF Hook] Генерация PDF: {server_url} -> {pdf_path}")
+
+                # Переходим на сервер и ждем полной загрузки структуры сайта
+                page.goto(server_url, wait_until="networkidle")
+                
+                # Применяем стили оформления БЕЗ внешних сетевых инъекций скриптов
+                page.add_style_tag(content=CLEAN_PDF_CSS)
+                
+                # Печать с автоматическим верхним колонтитулом
+                page.pdf(
+                    path=pdf_path,
+                    format="A4",
+                    margin={
+                        "top": "25mm",     # Чуть увеличили верхнее поле, чтобы колонтитулу было просторно
+                        "bottom": "20mm",
+                        "left": "20mm",
+                        "right": "20mm"
+                    },
+                    print_background=True,
+                    
+                    # Включаем отображение колонтитулов
+                    display_header_footer=True,
+                    
+                    # HTML-шаблон для верхнего колонтитула (header)
+                    header_template="""
+                        <div style="
+                            font-family: 'Fira Sans', 'Segoe UI', sans-serif; 
+                            font-size: 8pt; 
+                            color: #94a3b8; 
+                            display: flex; 
+                            align-items: center; 
+                            justify-content: space-between; 
+                            width: 100%; 
+                            padding-left: 20mm; 
+                            padding-right: 20mm;
+                            border-bottom: 1px solid #f1f5f9;
+                            padding-bottom: 5px;
+                        ">
+                            <!-- Левая часть: логотип и текст -->
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <img src="https://documentat.io/assets/img/docio-logo-grey.svg" style="height: 12px; width: auto;" />
+                                <span>Техническая документация</span>
+                            </div>
+                            
+                            <!-- Правая часть: Название страницы (подтягивается автоматически браузером) -->
+                            <div class="title" style="font-weight: 500;"></div>
+                        </div>
+                    """,
+                    
+                    # Пустой нижний колонтитул (footer), чтобы убрать стандартные системные надписи Chromium
+                    footer_template="<div></div>"
+                )
+
+            browser.close()
+        print("[PDF Hook] Все PDF успешно созданы!")
+    except Exception as e:
+        print(f"[PDF Hook] Ошибка при генерации PDF: {e}")

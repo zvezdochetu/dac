@@ -126,21 +126,25 @@
 
 ### Canonical Open Documentation Academy (reST)
 
-Безусловный фаворит: много понятно оформленных задач для новичков, открытое дружелюбное сообщество. 
+Самый логичный и простой вход. Много понятно оформленных задач для новичков, открытое дружелюбное сообщество. 
 
 Сайт проекта: <https://canonical.com/documentation/open-documentation-academy>
 
 Issues: <https://github.com/canonical/open-documentation-academy/issues>
 
-### MDN Web Docs (Markdown)
+### GitHub (Markdown)
 
-Сайт проекта: <https://developer.mozilla.org/>
+Золотой пункт для вашего портфолио. Свободных задач мало, но они совсем несложные, большинство подходят для новичков.
 
-Правила контрибьюта: <https://github.com/mdn/content/blob/main/CONTRIBUTING.md>
+Сайт проекта: <https://github.com/>
 
-Issues: <https://github.com/mdn/content/issues>
+Правила контрибьюта: <https://github.com/github/docs/blob/main/.github/CONTRIBUTING.md>
+
+Issues: <https://github.com/github/docs/issues>
 
 ### Cloud Native Glossary (Markdown)
+
+Золотой пункт для вашего портфолио и в плане Docs as Code, и чисто с писательской точки зрения. Задач мало, они сложные.
 
 Сайт проекта: <https://glossary.cncf.io/>
 
@@ -150,31 +154,33 @@ Issues: <https://github.com/cncf/glossary/issues>
 
 ### Документация Яндекс Клауд (Markdown)
 
-**Минусы:** задачи придется искать самому.
+**Минусы:**
 
-**Плюсы:** всё на русском, огромное количество сервисов и такое же огромное поле для работы.
+* задачи придется искать самому;
+* опыт релевантен почти только для СНГ.
+
+**Плюсы:**
+
+* всё на русском;
+* огромное количество сервисов и такое же огромное поле для работы.
 
 Сайт проекта: <https://yandex.cloud/ru/content-program>
 
-Issues: <https://github.com/canonical/open-documentation-academy/issues>
+Правила контрибьюта: <https://github.com/yandex-cloud/docs/blob/master/guides/how-to-contribute.md>
 
-### GitHub (Markdown)
+### MDN Web Docs (Markdown)
 
-Сайт проекта: <https://github.com/>
+Хороший пункт в портфолио. Задач много, но они не очень понятно описаны и в целом мало подходят для новичков.
 
-Правила контрибьюта: <https://github.com/github/docs/blob/main/.github/CONTRIBUTING.md>
+Сайт проекта: <https://developer.mozilla.org/>
 
-Issues: <https://github.com/github/docs/issues>
+Правила контрибьюта: <https://github.com/mdn/content/blob/main/CONTRIBUTING.md>
 
-### Ethereum website (Markdown)
-
-Сайт проекта: <https://ethereum.org/>
-
-Правила контрибьюта: <https://ethereum.org/contributing/>
-
-Issues: <https://github.com/ethereum/ethereum-org-website/issues>
+Issues: <https://github.com/mdn/content/issues>
 
 ### Nextcloud (Markdown)
+
+Хороший проект-середнячок. Задач мало, нужно ждать подходящих.
 
 Сайт проекта: <https://nextcloud.com/>
 
@@ -182,12 +188,22 @@ Issues: <https://github.com/ethereum/ethereum-org-website/issues>
 
 Issues: <https://github.com/nextcloud/documentation/issues>
 
+### Ethereum website (Markdown)
+
+Если вам интересно работать в сфере криптовалют, неплохой кандидат, но задачи сложные.
+
+Сайт проекта: <https://ethereum.org/>
+
+Правила контрибьюта: <https://ethereum.org/contributing/>
+
+Issues: <https://github.com/ethereum/ethereum-org-website/issues>
+
 ### Fedora (AsciiDoc)
 
 Если хочется получить опыт работы с AsciiDoc, а также отдельной forge-системой (Fedora Forge) вместо GitHub.
 
 Сайт проекта: <https://fedoraproject.org/>
 
-Правила контрибьюта: <https://docs.fedoraproject.org/en-US/fedora-docs/contributing-docs/>
+Правила контрибьюта: <https://docs.fedoraproject.org/en-US/fedora-docs/contributing/>
 
 Issues: <https://forge.fedoraproject.org/docs/tickets/issues>

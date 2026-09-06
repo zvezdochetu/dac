@@ -338,7 +338,7 @@
 
     * Пример файла для стиля «под терминал»:
     
-        ??? info "Файл большой, поэтому под катом"
+        ??? info hide-code-in-pdf "Файл большой, поэтому под катом"
 
             ``` title="custom.css"
             /* .vitepress/theme/custom.css — Matrix / Terminal Edition */
@@ -500,7 +500,7 @@
 
     * Пример файла для «плакатного» стиля:
     
-        ??? info "Файл большой, поэтому под катом"
+        ??? info hide-code-in-pdf "Файл большой, поэтому под катом"
 
             ``` title="custom.css"
             /* .vitepress/theme/custom.css — Швейцарская плакатная редакция */

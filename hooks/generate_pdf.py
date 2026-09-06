@@ -7,8 +7,11 @@ from playwright.sync_api import sync_playwright
 
 CLEAN_PDF_CSS = """
 /* 1. ПОКАЗЫВАЕМ ЭЛЕМЕНТЫ ТОЛЬКО ДЛЯ PDF */
-.pdf-only,
-.md-content .toc {
+.pdf-only
+/* Закомментировано, чтобы оглавление не включалось принудительно:
+, .md-content .toc 
+*/
+{
     display: block !important;
 }
 
@@ -25,10 +28,32 @@ CLEAN_PDF_CSS = """
     display: none !important;
 }
 
-/* 3. СТИЛИЗАЦИЯ ОГЛАВЛЕНИЯ [TOC] */
-h2.pdf-only {
-    display: none !important; /* СТАЛО: полностью скрываем заголовок "Оглавление" */
+/* СТАЛО: Подавляем огромный код только у спойлеров с классом .hide-code-in-pdf */
+.md-typeset details.hide-code-in-pdf .admonition-content,
+.md-typeset details.hide-code-in-pdf pre,
+.md-typeset details.hide-code-in-pdf .highlight {
+    display: none !important; /* Вырезаем код при печати */
 }
+
+/* Схлопываем плашку до аккуратной полоски и запрещаем ей разрываться между листами */
+.md-typeset details.hide-code-in-pdf {
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+
+/* 3. СТИЛИЗАЦИЯ ОГЛАВЛЕНИЯ [TOC] */
+/* ОТКЛЮЧАЕМ ОГЛАВЛЕНИЕ ДЛЯ PDF С ПОМОЩЬЮ DISPLAY: NONE */
+h2.pdf-only,
+.md-content__inner .toc,
+.md-typeset .toc,
+.md-content .toc {
+    display: none !important;
+}
+
+/* НИЖЕ ВСЕ СТАРЫЕ СТИЛИ ОГЛАВЛЕНИЯ ПРОСТО ЗАКОММЕНТИРОВАНЫ БРАУЗЕРОМ И НЕ РАБОТАЮТ:
 
 .md-content__inner .toc,
 .md-typeset .toc {
@@ -37,8 +62,6 @@ h2.pdf-only {
     border: 1px solid #e2e8f0 !important;
     border-radius: 6px !important;
     padding: 24px 28px 24px 35px !important; 
-    
-    /* Сохраняем комфортный отступ сверху от отцентрированного H1 до плашки */
     margin-top: 30px !important;   
     margin-bottom: 50px !important; 
 }
@@ -69,8 +92,9 @@ h2.pdf-only {
     font-size: 11pt !important;
     text-decoration: none !important;
 }
+*/
 
-/* 4. ЗАПРЕТ РАЗРЫВА БЛОКОВ МЕЖДУ СТРАНИЦАМИ */
+/* 4. ЗАПРЕТ РАЗРЫВА БЛОКОВ МЕЖДУ СТРАНИЦАМИ И УНИЧТОЖЕНИЕ ПУСТОТЫ */
 .md-typeset .highlight,
 .md-typeset pre,
 .md-typeset .toc,
@@ -81,6 +105,35 @@ h2.pdf-only {
     page-break-inside: avoid !important;
 }
 
+/* Уничтожаем внутренние CSS-переменные высоты анимации MkDocs-Material */
+.md-typeset details,
+.md-typeset details.admonition,
+.md-typeset .admonition,
+.md-typeset .admonition-content,
+.md-annotation__content {
+    /* Сбрасываем внутренний расчет анимации раскрытия темы */
+    --md-details-height: auto !important; 
+    
+    display: block !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    
+    /* Убираем внутренние флексы, которые не дают рамке схлопнуться */
+    flex-direction: column !important; 
+    overflow: visible !important;
+}
+
+/* Принудительно убираем любые фиксированные внутренние отступы у контента спойлера */
+.md-typeset details .md-typeset__scrollwrap,
+.md-typeset details .md-typeset__table,
+.md-typeset details .highlight {
+    display: block !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0 !important;
+}
+
 .md-typeset h1, 
 .md-typeset h2, 
 .md-typeset h3, 
@@ -89,15 +142,90 @@ h2.pdf-only {
     page-break-after: avoid !important;
 }
 
+/* Подсвечиваем все блоки примечаний (admonition) легким серым фоном */
+.md-typeset .admonition,
+.md-typeset details.admonition {
+    background-color: #f8fafc !important; /* Нежный нейтральный фон */
+    padding: 16px 20px 16px 20px !important; /* Комфортные внутренние отступы */
+    margin: 1.5em 0 !important;
+    border-radius: 4px !important;
+    
+    /* Делаем саму левую линию тоньше и изящнее */
+    border-left-width: 3px !important; 
+}
+
+/* Смягчаем цвета левых полос для разных типов примечаний, чтобы они не были вырвиглазными */
+.md-typeset .admonition.info,
+.md-typeset details.admonition.info {
+    border-left-color: #3b82f6 !important; /* Спокойный, приглушенный синий */
+}
+
+.md-typeset .admonition.warning,
+.md-typeset details.admonition.warning {
+    border-left-color: #f59e0b !important; /* Мягкий янтарный/оранжевый для предупреждений */
+}
+
+.md-typeset .admonition.note,
+.md-typeset details.admonition.note {
+    border-left-color: #06b6d4 !important; /* Приглушенный бирюзовый */
+}
+
+/* Наглухо запрещаем синей линии родительского блока прорезать вложенные элементы */
+.md-typeset .admonition .admonition {
+    margin: 1em 0 !important;
+    /* Вложенный блок сам управляет своей левой линией */
+}
+
+/* Сбрасываем лишние внутренние фоны у контента */
+.md-typeset .admonition-content,
+.md-typeset details.admonition .admonition-content {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Полностью убираем внутреннюю плашку под заголовками примечаний */
+.md-typeset .admonition-title,
+.md-typeset details.admonition summary {
+    background-color: transparent !important; 
+    background: transparent !important;
+    margin: 0 0 12px 0 !important; /* Легкий отступ снизу до текста */
+    border-bottom: none !important;            
+    
+    /* ФИКСАЦИЯ: Сбрасываем веб-масштабирование темы, чтобы кегль не раздувался */
+    font-family: "Fira Sans", "Segoe UI", sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 1em !important; /* СТАЛО: Жестко 100% от размера текста, без умножения */
+    color: #0f172a !important; 
+    
+    display: block !important; 
+    position: relative !important;
+    padding: 0 0 0 20px !important; /* Зазор для иконки */
+}
+
+/* ГАРАНТИРОВАННО И ФИКСИРОВАННО СТАВИМ ИКОНКУ НА СВОЕ МЕСТО */
+.md-typeset .admonition-title::before,
+.md-typeset details.admonition summary::before {
+    position: absolute !important;
+    left: 0 !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important; /* Строго центрируем иконку по вертикали */
+    margin: 0 !important;
+    width: 15px !important;  /* Слегка уменьшили под базовый размер текста */
+    height: 15px !important;
+    display: inline-block !important;
+}
+
 /* 5. УМНАЯ ОБРАБОТКА ССЫЛОК */
 .md-typeset a[href^="http://"], 
 .md-typeset a[href^="https://"] {
-    color: #2563eb !important;
-    text-decoration: underline !important;
+    color: #1e40af !important; /* СТАЛО: спокойный глубокий синий (вместо #2563eb) */
+    text-decoration: none !important; /* Убираем нижнее подчеркивание, чтобы текст выглядел чище */
+    border-bottom: 1px dashed #cbd5e1 !important; /* Добавляем легкий аккуратный пунктир снизу */
 }
 
 .md-typeset a[href^="#"] {
-    color: #0f172a !important;
+    color: #1e293b !important;
     text-decoration: none !important;
 }
 
@@ -145,13 +273,24 @@ body, .md-typeset {
 }
 
 /* 9. СТИЛИЗАЦИЯ ГЛАВНОГО ЗАГОЛОВКА ДОКУМЕНТА */
-.md-typeset h1 {
-    text-align: center !important;  /* Выравниваем по центру */
-    font-size: 28pt !important;     /* Увеличиваем размер шрифта */
+
+/* Сбрасываем относительный масштаб шрифта темы для печатной версии */
+html, body {
+    font-size: 10.5pt !important;
+}
+
+/* Задаем жесткий фиксированный размер для H1 на ВСЕХ страницах */
+.md-typeset h1,
+h1 {
+    font-family: "Fira Sans", "Segoe UI", sans-serif !important;
+    text-align: center !important;  
+    font-size: 28pt !important; /* Теперь этот размер будет строго одинаковым везде */
+    font-weight: 700 !important;
     line-height: 1.3 !important;
     margin-top: 20px !important;    
-    margin-bottom: 40px !important; /* Увеличиваем отступ снизу до оглавления */
+    margin-bottom: 80px !important; 
 }
+
 """
 
 class TargetDirectoryHTTPRequestHandler(SimpleHTTPRequestHandler):
@@ -198,14 +337,43 @@ def on_post_build(config):
             svg_base64_data = f"data:image/svg+xml;base64,{encoded}"
     else:
         print(f"[PDF Hook] Предупреждение: Локальный логотип {svg_local_path} не найден!")
-        # Запасной веб-адрес, если локального файла вдруг не оказалось
         svg_base64_data = "https://documentat.io"
 
-    TARGET_PAGES = [
-        ("takeaway/index.html", "takeaway.pdf"),
-        ("cheatsheet/index.html", "cheatsheet.pdf"), 
-    ]
+    # --- УНИВЕРСАЛЬНЫЙ СКВОЗНОЙ ПОИСК ВСЕХ СТРАНИЦ САЙТА ---
+    TARGET_PAGES = []
+    
+    for root, dirs, files in os.walk(site_dir):
+        # Игнорируем технические директории MkDocs со статикой
+        if any(ignored in root for ignored in [os.path.join(site_dir, "assets"), os.path.join(site_dir, "css"), os.path.join(site_dir, "js")]):
+            continue
+            
+        for file in files:
+            if file.endswith(".html"):
+                full_html_path = os.path.join(root, file)
+                
+                # Относительный путь для сервера
+                rel_html_path = os.path.relpath(full_html_path, site_dir)
+                rel_html_path = rel_html_path.replace(os.sep, '/') # Нормализация слэшей под Windows
+                
+                # Исключаем служебные страницы темы
+                if file == "404.html" or "search.html" in rel_html_path:
+                    continue
+                
+                # Умное именование PDF
+                if file == "index.html":
+                    parent_folder_name = os.path.basename(root)
+                    if root == site_dir:
+                        pdf_filename = "index.pdf"
+                    else:
+                        pdf_filename = f"{parent_folder_name}.pdf"
+                else:
+                    pdf_filename = file.replace(".html", ".pdf")
+                    
+                TARGET_PAGES.append((rel_html_path, pdf_filename))
 
+    print(f"[PDF Hook] Найдено страниц для конвертации: {len(TARGET_PAGES)}")
+
+    # --- АВТОМАТИЧЕСКАЯ ГЕНЕРАЦИЯ ВСЕХ НАЙДЕННЫХ ФАЙЛОВ ---
     try:
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -213,19 +381,9 @@ def on_post_build(config):
 
             for rel_html_path, pdf_filename in TARGET_PAGES:
                 html_path = os.path.join(site_dir, rel_html_path)
-                url_path = rel_html_path
-
-                if not os.path.exists(html_path):
-                    fallback_path = rel_html_path.replace('/index.html', '.html')
-                    if os.path.exists(os.path.join(site_dir, fallback_path)):
-                        html_path = os.path.join(site_dir, fallback_path)
-                        url_path = fallback_path
-                    else:
-                        print(f"[PDF Hook] Файл {html_path} не найден. Пропуск.")
-                        continue
-
                 pdf_path = os.path.join(os.path.dirname(html_path), pdf_filename)
-                clean_url = url_path.lstrip('/')
+                
+                clean_url = rel_html_path.lstrip('/')
                 server_url = f"http://127.0.0.1:{PORT}/{clean_url}"
                 
                 print(f"[PDF Hook] Генерация PDF: {server_url} -> {pdf_path}")
@@ -262,22 +420,20 @@ def on_post_build(config):
                                     <img src="{svg_base64_data}" style="height: 18px; width: auto; display: block;" />
                                 </div>
                                 
-                                <!-- Правая часть: текст -->
+                                <!-- Правая часть: фиксированное название вашего курса -->
                                 <div style="font-weight: 500; display: flex; align-items: center;">
                                     Документируй как инженер: практический курс Docs as Code
                                 </div>
                             </div>
 
                             <!-- ИСКУССТВЕННЫЙ ОТСТУП И СЕРАЯ ЛИНИЯ -->
-                            <!-- height задает точный отступ от текста до линии в пикселях -->
                             <div style="height: 10px; width: 100%; border-bottom: 1px solid #f1f5f9;"></div>
                         </div>
                     """,
                     footer_template="<div></div>"
                 )
 
-
             browser.close()
-        print("[PDF Hook] Все PDF успешно созданы!")
+        print(f"[PDF Hook] Все PDF успешно созданы! Всего файлов: {len(TARGET_PAGES)}")
     except Exception as e:
         print(f"[PDF Hook] Ошибка при генерации PDF: {e}")

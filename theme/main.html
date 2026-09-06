@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {# 1. АВТОМАТИЧЕСКИЙ РАСЧЕТ ПУТИ К PDF #}
+  {% set src_file = page.file.src_path.split('/')[-1] %}
+  {% if src_file == "index.md" %}
+    {% if page.file.src_path.split('/')|length > 1 %}
+      {% set pdf_name = page.file.src_path.split('/')[-2] ~ ".pdf" %}
+    {% else %}
+      {% set pdf_name = "index.pdf" %}
+    {% endif %}
+  {% else %}
+    {% set pdf_name = src_file.replace('.md', '.pdf') %}
+  {% endif %}
+
+  {# 2. ВЫВОДИМ ТЕКСТ СТАТЬИ (только ваш оригинальный H1 из Markdown) #}
+  {{ page.content }}
+
+  {# 3. АККУРАТНЫЙ СКРУГЛЕННЫЙ БЕЙДЖ С ПРЕЖНИМ СИНИМ ЦВЕТОМ #}
+  <div id="pdf-badge-container" class="no-pdf" style="display: none; margin-top: 15px; margin-bottom: 30px;">
+    <a href="{{ pdf_name }}" target="_blank" style="
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background-color: #3f51b5; /* Возвращен ваш прежний фирменный синий/индиго цвет */
+        color: #ffffff;            /* Белый текст */
+        font-size: 11px;
+        font-weight: 500;
+        padding: 5px 14px;         /* Компактные отступы */
+        border-radius: 20px;       /* Оставляем аккуратное скругление бейджа */
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+    " onmouseover="this.style.backgroundColor='#303f9f';" 
+       onmouseout="this.style.backgroundColor='#3f51b5';">
+      Скачать как PDF
+    </a>
+  </div>
+
+  {# 4. ПЕРЕМЕЩЕНИЕ БЕЙДЖА ПОД ВАШ H1 #}
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const h1 = document.querySelector(".md-content h1");
+        const badge = document.getElementById("pdf-badge-container");
+        if (h1 && badge) {
+            h1.parentNode.insertBefore(badge, h1.nextSibling);
+            badge.style.display = "block";
+        } else if (badge) {
+            badge.style.display = "block";
+        }
+    });
+  </script>
+{% endblock %}

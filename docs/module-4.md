@@ -22,7 +22,7 @@
 
 ## 1. Уточнение задачи (Issue)
 
-1. Зайдите в раздел **Issues** учебного репозитория: https://github.com/zvezdochetu/docker-docs-course/issues
+1. Зайдите в раздел **Issues** учебного репозитория: <https://github.com/zvezdochetu/docker-docs-course/issues>
 
 1. Нажмите на фильтр **Assignees** и выберите в списке себя.
 
@@ -52,7 +52,7 @@
 
 ## 4. Создание Draft PR
 
-1. Зайдите в раздел **Pull Requests** учебного репозитория: https://github.com/zvezdochetu/docker-docs-course/pulls
+1. Зайдите в раздел **Pull Requests** учебного репозитория: <https://github.com/zvezdochetu/docker-docs-course/pulls>
 
 1. Нажмите кнопку **Compare & Pull request**.
 

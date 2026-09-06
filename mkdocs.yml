@@ -2,6 +2,7 @@ site_name: Практический курс Docs as Code
 
 theme:
   name: material
+  custom_dir: theme
   language: ru
   palette:
 # Настройки для светлой темы
@@ -33,7 +34,11 @@ nav:
   - Модуль 2: module-2.md
   - Модуль 3: module-3.md
   - Модуль 4: module-4.md
-#  - Чек-лист по итогам: takeaway.md
+  - Памятки по итогам курса:
+      # Команды Git: takeaway/git.md
+        Проекты для первого опыта: takeaway/first-step.md
+        Синтаксис Markdown: takeaway/md.md
+        Конвертация в docs, pdf и confluence: takeaway/pdf-docx-conf.md
 
 markdown_extensions:
   - admonition                  # Блоки внимания (выноски)

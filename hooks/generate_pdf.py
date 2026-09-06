@@ -1,6 +1,7 @@
 import os
 import sys
 import threading
+import base64
 from http.server import SimpleHTTPRequestHandler, HTTPServer
 from playwright.sync_api import sync_playwright
 
@@ -25,13 +26,8 @@ CLEAN_PDF_CSS = """
 }
 
 /* 3. СТИЛИЗАЦИЯ ОГЛАВЛЕНИЯ [TOC] */
-.pdf-only,
 h2.pdf-only {
-    display: block !important;
-    margin-top: 40px !important;    
-    margin-bottom: 20px !important; 
-    font-size: 14pt !important;
-    padding-left: 5px !important; /* Легкий сдвиг самого слова "Оглавление" вправо */
+    display: none !important; /* СТАЛО: полностью скрываем заголовок "Оглавление" */
 }
 
 .md-content__inner .toc,
@@ -40,22 +36,19 @@ h2.pdf-only {
     background-color: #f8fafc !important;
     border: 1px solid #e2e8f0 !important;
     border-radius: 6px !important;
-    
-    /* ТАКЖЕ увеличиваем общий padding рамки (вверх, право, низ, лево) */
     padding: 24px 28px 24px 35px !important; 
     
-    margin-top: 20px !important;   
+    /* Сохраняем комфортный отступ сверху от отцентрированного H1 до плашки */
+    margin-top: 30px !important;   
     margin-bottom: 50px !important; 
 }
 
-/* Скрываем заголовок H1 из оглавления */
 .md-typeset .toc > ul > li > a {
     display: none !important;
 }
 
-/* ГАРАНТИРОВАННО СДВИГАЕМ СПИСОК ВПРАВО ОТ ЛЕВОГО КРАЯ/БЛОКА */
 .md-typeset .toc ul {
-    padding-left: 15px !important; /* Вот этот параметр отодвинет весь текст вправо */
+    padding-left: 15px !important;
     margin-left: 0 !important;
     list-style-type: none !important;
 }
@@ -115,9 +108,8 @@ h2.pdf-only {
     cursor: default !important;
 }
 
-/* 6. БАЗОВАЯ ТИПОГРАФИКА И ВЕРСТКА (Инженерный стиль Fira) */
+/* 6. БАЗОВАЯ ТИПОГРАФИКА И ВЕРСТКА */
 body, .md-typeset {
-    /* Если в системе есть Fira Sans — берем его, если нет — чистый современный системный шрифт */
     font-family: "Fira Sans", "Segoe UI", system-ui, -apple-system, sans-serif !important;
     font-size: 10.5pt !important; 
     line-height: 1.6 !important;
@@ -150,6 +142,15 @@ body, .md-typeset {
     color: #0f172a !important;
     white-space: pre-wrap !important;
     word-break: break-all !important;
+}
+
+/* 9. СТИЛИЗАЦИЯ ГЛАВНОГО ЗАГОЛОВКА ДОКУМЕНТА */
+.md-typeset h1 {
+    text-align: center !important;  /* Выравниваем по центру */
+    font-size: 28pt !important;     /* Увеличиваем размер шрифта */
+    line-height: 1.3 !important;
+    margin-top: 20px !important;    
+    margin-bottom: 40px !important; /* Увеличиваем отступ снизу до оглавления */
 }
 """
 
@@ -186,6 +187,20 @@ def on_post_build(config):
     )
     server_thread.start()
 
+    # Путь к картинке в скомпилированной папке assets
+    svg_local_path = os.path.join(site_dir, "assets", "docio-logo-grey.svg")
+    svg_base64_data = ""
+
+    # Пытаемся прочесть файл и закодировать его в Base64 для инъекции
+    if os.path.exists(svg_local_path):
+        with open(svg_local_path, "rb") as f:
+            encoded = base64.b64encode(f.read()).decode("utf-8")
+            svg_base64_data = f"data:image/svg+xml;base64,{encoded}"
+    else:
+        print(f"[PDF Hook] Предупреждение: Локальный логотип {svg_local_path} не найден!")
+        # Запасной веб-адрес, если локального файла вдруг не оказалось
+        svg_base64_data = "https://documentat.io"
+
     TARGET_PAGES = [
         ("takeaway/index.html", "takeaway.pdf"),
         ("cheatsheet/index.html", "cheatsheet.pdf"), 
@@ -215,56 +230,52 @@ def on_post_build(config):
                 
                 print(f"[PDF Hook] Генерация PDF: {server_url} -> {pdf_path}")
 
-                # Переходим на сервер и ждем полной загрузки структуры сайта
                 page.goto(server_url, wait_until="networkidle")
-                
-                # Применяем стили оформления БЕЗ внешних сетевых инъекций скриптов
                 page.add_style_tag(content=CLEAN_PDF_CSS)
                 
-                # Печать с автоматическим верхним колонтитулом
+                # Печать: жесткое разделение контента и линии через пустой блок-распорку
                 page.pdf(
                     path=pdf_path,
                     format="A4",
                     margin={
-                        "top": "25mm",     # Чуть увеличили верхнее поле, чтобы колонтитулу было просторно
+                        "top": "20mm",     
                         "bottom": "20mm",
                         "left": "20mm",
                         "right": "20mm"
                     },
                     print_background=True,
-                    
-                    # Включаем отображение колонтитулов
                     display_header_footer=True,
-                    
-                    # HTML-шаблон для верхнего колонтитула (header)
-                    header_template="""
+                    header_template=f"""
                         <div style="
                             font-family: 'Fira Sans', 'Segoe UI', sans-serif; 
                             font-size: 8pt; 
                             color: #94a3b8; 
-                            display: flex; 
-                            align-items: center; 
-                            justify-content: space-between; 
                             width: 100%; 
                             padding-left: 20mm; 
                             padding-right: 20mm;
-                            border-bottom: 1px solid #f1f5f9;
-                            padding-bottom: 5px;
+                            margin-top: -5px;
                         ">
-                            <!-- Левая часть: логотип и текст -->
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <img src="https://documentat.io/assets/img/docio-logo-grey.svg" style="height: 12px; width: auto;" />
-                                <span>Техническая документация</span>
+                            <!-- Верхняя строчка с контентом -->
+                            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                                <!-- Левая часть: логотип -->
+                                <div style="display: flex; align-items: center;">
+                                    <img src="{svg_base64_data}" style="height: 18px; width: auto; display: block;" />
+                                </div>
+                                
+                                <!-- Правая часть: текст -->
+                                <div style="font-weight: 500; display: flex; align-items: center;">
+                                    Документируй как инженер: практический курс Docs as Code
+                                </div>
                             </div>
-                            
-                            <!-- Правая часть: Название страницы (подтягивается автоматически браузером) -->
-                            <div class="title" style="font-weight: 500;"></div>
+
+                            <!-- ИСКУССТВЕННЫЙ ОТСТУП И СЕРАЯ ЛИНИЯ -->
+                            <!-- height задает точный отступ от текста до линии в пикселях -->
+                            <div style="height: 10px; width: 100%; border-bottom: 1px solid #f1f5f9;"></div>
                         </div>
                     """,
-                    
-                    # Пустой нижний колонтитул (footer), чтобы убрать стандартные системные надписи Chromium
                     footer_template="<div></div>"
                 )
+
 
             browser.close()
         print("[PDF Hook] Все PDF успешно созданы!")

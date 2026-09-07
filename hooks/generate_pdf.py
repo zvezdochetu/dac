@@ -190,14 +190,28 @@ h2.pdf-only,
 }
 
 /* 7. ТИПОГРАФИКА */
-body, .md-typeset, .md-typeset p, .md-typeset li {
+body, .md-typeset {
     font-family: "Fira Sans", "Segoe UI", system-ui, -apple-system, sans-serif !important;
     font-size: 10.5pt !important; 
     line-height: 1.6 !important;
     color: #1e293b !important;
-    text-align: left !important;       /* Отменяет выравнивание по ширине */
-    letter-spacing: normal !important; /* Сбрасывает растяжение букв */
-    word-spacing: normal !important;   /* Возвращает естественные пробелы */
+    text-rendering: optimizeLegibility !important;
+    -webkit-font-smoothing: antialiased !important;
+    font-kerning: normal !important;
+}
+
+/* Отмена выравнивания по ширине только для параграфов, списков и таблиц */
+.md-typeset p,
+.md-typeset li,
+.md-typeset li span,
+.md-typeset p span,
+.md-typeset td,
+.md-typeset th {
+    text-align: left !important;
+    text-align-last: left !important;
+    letter-spacing: normal !important;
+    word-spacing: normal !important;
+    text-justify: none !important;
 }
 
 .md-typeset h1, .md-typeset h2, .md-typeset h3 {
@@ -254,9 +268,11 @@ html, body {
 }
 
 .md-typeset h1,
+.md-typeset h1 *,
 h1 {
     font-family: "Fira Sans", "Segoe UI", sans-serif !important;
     text-align: center !important;  
+    text-align-last: center !important; /* Явно фиксирует центр для Chromium */
     font-size: 28pt !important;
     font-weight: 700 !important;
     line-height: 1.3 !important;

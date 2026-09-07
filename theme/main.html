@@ -2,7 +2,7 @@
 
 {% block content %}
 
-  {# 1. КАРДИНАЛЬНЫЙ РАСЧЕТ ИМЕНИ ФАЙЛА #}
+  {# 1. КАРДИНАЛЬНЫЙ РАСЧЕТ ИМЕНИ ФАЙЛА С ЗАЩИТОЙ ОТ WINDOWS-СЛЭШЕЙ #}
   {% set clean_src_path = page.file.src_path.replace('\\', '/') %}
   {% set path_parts = clean_src_path.split('/') %}
   {% set src_file = path_parts[-1] %}
@@ -18,16 +18,34 @@
   {% endif %}
 
   {# 2. СБОРКА АБСОЛЮТНОГО ПУТИ ОТ КОРНЯ САЙТА #}
-  {# page.url всегда возвращает путь от корня сайта до текущей папки (например, 'takeaway/first-step/') #}
-  {# Если вы добавите /v1/ в MkDocs, page.url сам начнет возвращать 'v1/takeaway/first-step/' #}
   {% set pdf_path = '/' ~ page.url ~ pdf_name %}
+
+  {# ИСПРАВЛЕНИЕ: ПЕЧАТНЫЕ СТИЛИ ДЛЯ БОРЬБЫ С ЛИШНИМИ СТРАНИЦАМИ #}
+  <style>
+    @media print {
+      /* Жестко обнуляем отступы html и body веб-темы, чтобы они не суммировались с полями Playwright */
+      html, body, .md-container, .md-content, .md-content__inner {
+        margin: 0 !important;
+        padding: 0 !important;
+        height: auto !important;
+      }
+      /* Скрываем скрытые текстовые узлы в самом конце документа */
+      script, style {
+        display: none !important;
+      }
+      /* Обнуляем отступ у последнего текстового элемента в статье, чтобы он не выдавливал страницу */
+      .md-content__inner *:last-child {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+      }
+    }
+  </style>
 
   {# 3. ВЫВОДИМ ТЕКСТ СТАТЬИ #}
   {{ page.content }}
 
-  {# 4. АККУРАТНЫЙ СКРУГЛЕННЫЙ БЕЙДЖ С ПРЕЖНИМ СИНИМ ЦВЕТОМ #}
+  {# 4. АККУРАТНЫЙ СКРУГЛЕННЫЙ БЕЙДЖ С СКРИПТОМ ПЕРЕМЕЩЕНИЯ #}
   <div id="pdf-badge-container" class="no-pdf" style="display: none; margin-top: 15px; margin-bottom: 30px;">
-    {# Мы используем чистый абсолютный путь без фильтра | url, так как сами собрали его идеально #}
     <a href="{{ pdf_path }}" target="_blank" style="
         display: inline-flex;
         align-items: center;
@@ -44,19 +62,18 @@
        onmouseout="this.style.backgroundColor='#3f51b5';">
       Скачать как PDF
     </a>
-  </div>
 
-  {# 5. ПЕРЕМЕЩЕНИЕ БЕЙДЖА ПОД ВАШ H1 #}
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const h1 = document.querySelector(".md-content h1");
-        const badge = document.getElementById("pdf-badge-container");
-        if (h1 && badge) {
-            h1.parentNode.insertBefore(badge, h1.nextSibling);
-            badge.style.display = "block";
-        } else if (badge) {
-            badge.style.display = "block";
-        }
-    });
-  </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+          const h1 = document.querySelector(".md-content h1");
+          const badge = document.getElementById("pdf-badge-container");
+          if (h1 && badge) {
+              h1.parentNode.insertBefore(badge, h1.nextSibling);
+              badge.style.display = "block";
+          } else if (badge) {
+              badge.style.display = "block";
+          }
+      });
+    </script>
+  </div>
 {% endblock %}

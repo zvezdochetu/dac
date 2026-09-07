@@ -430,7 +430,8 @@ def on_post_build(config):
                             <div style="height: 10px; width: 100%; border-bottom: 1px solid #f1f5f9;"></div>
                         </div>
                     """,
-                    footer_template="<div></div>"
+                    # ИСПРАВЛЕНИЕ ТУТ: жестко обнуляем размер шрифта и высоту блока подвала
+                    footer_template="<div style='font-size: 0px; height: 0px; line-height: 0px;'></div>"
                 )
 
             browser.close()

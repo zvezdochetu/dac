@@ -7,15 +7,11 @@ from playwright.sync_api import sync_playwright
 
 CLEAN_PDF_CSS = """
 /* 1. ПОКАЗЫВАЕМ ЭЛЕМЕНТЫ ТОЛЬКО ДЛЯ PDF */
-.pdf-only
-/* Закомментировано, чтобы оглавление не включалось принудительно:
-, .md-content .toc 
-*/
-{
+.pdf-only {
     display: block !important;
 }
 
-/* 2. СКРЫВАЕМ ВЕБ-ИНТЕРФЕЙС И КНОПКУ СКАЧИВАНИЯ */
+/* 2. СКРЫВАЕМ ВЕБ-ИНТЕРФЕЙС И КНОПКИ */
 .no-pdf, 
 .md-header, 
 .md-sidebar, 
@@ -28,24 +24,20 @@ CLEAN_PDF_CSS = """
     display: none !important;
 }
 
-/* СТАЛО: Подавляем огромный код только у спойлеров с классом .hide-code-in-pdf */
+/* Подавляем огромный код только у спойлеров с классом .hide-code-in-pdf */
 .md-typeset details.hide-code-in-pdf .admonition-content,
 .md-typeset details.hide-code-in-pdf pre,
 .md-typeset details.hide-code-in-pdf .highlight {
-    display: none !important; /* Вырезаем код при печати */
+    display: none !important;
 }
 
-/* Схлопываем плашку до аккуратной полоски и запрещаем ей разрываться между листами */
 .md-typeset details.hide-code-in-pdf {
     height: auto !important;
     max-height: none !important;
     min-height: 0 !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
 }
 
-/* 3. СТИЛИЗАЦИЯ ОГЛАВЛЕНИЯ [TOC] */
-/* ОТКЛЮЧАЕМ ОГЛАВЛЕНИЕ ДЛЯ PDF С ПОМОЩЬЮ DISPLAY: NONE */
+/* 3. СКРЫВАЕМ ОГЛАВЛЕНИЕ ДЛЯ PDF */
 h2.pdf-only,
 .md-content__inner .toc,
 .md-typeset .toc,
@@ -53,85 +45,26 @@ h2.pdf-only,
     display: none !important;
 }
 
-/* НИЖЕ ВСЕ СТАРЫЕ СТИЛИ ОГЛАВЛЕНИЯ ПРОСТО ЗАКОММЕНТИРОВАНЫ БРАУЗЕРОМ И НЕ РАБОТАЮТ:
-
-.md-content__inner .toc,
-.md-typeset .toc {
-    display: block !important;
-    background-color: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 6px !important;
-    padding: 24px 28px 24px 35px !important; 
-    margin-top: 30px !important;   
-    margin-bottom: 50px !important; 
-}
-
-.md-typeset .toc > ul > li > a {
-    display: none !important;
-}
-
-.md-typeset .toc ul {
-    padding-left: 15px !important;
-    margin-left: 0 !important;
-    list-style-type: none !important;
-}
-
-.md-typeset .toc li {
-    padding-left: 0 !important;
-    margin-left: 0 !important;
-    margin-bottom: 10px !important; 
-    list-style-type: none !important;
-}
-
-.md-typeset .toc li:last-child {
-    margin-bottom: 0 !important;
-}
-
-.md-typeset .toc a {
-    color: #334155 !important;
-    font-size: 11pt !important;
-    text-decoration: none !important;
-}
-*/
-
-/* 4. ЗАПРЕТ РАЗРЫВА БЛОКОВ МЕЖДУ СТРАНИЦАМИ И УНИЧТОЖЕНИЕ ПУСТОТЫ */
-.md-typeset .highlight,
-.md-typeset pre,
-.md-typeset .toc,
-.md-typeset table,
-.md-typeset blockquote,
-.md-typeset .admonition {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
-}
-
-/* Уничтожаем внутренние CSS-переменные высоты анимации MkDocs-Material */
+/* 4. ПРАВИЛА ПЕРЕНОСА СТРАНИЦ (БЕЗ ОБРЕЗАНИЯ СНИЗУ) */
 .md-typeset details,
-.md-typeset details.admonition,
 .md-typeset .admonition,
-.md-typeset .admonition-content,
-.md-annotation__content {
-    /* Сбрасываем внутренний расчет анимации раскрытия темы */
-    --md-details-height: auto !important; 
-    
-    display: block !important;
+.md-typeset .admonition-content {
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+    overflow: visible !important;
     height: auto !important;
     max-height: none !important;
     min-height: 0 !important;
-    
-    /* Убираем внутренние флексы, которые не дают рамке схлопнуться */
-    flex-direction: column !important; 
-    overflow: visible !important;
 }
 
-/* Принудительно убираем любые фиксированные внутренние отступы у контента спойлера */
-.md-typeset details .md-typeset__scrollwrap,
-.md-typeset details .md-typeset__table,
-.md-typeset details .highlight {
-    display: block !important;
-    height: auto !important;
-    max-height: none !important;
-    margin: 0 !important;
+.md-typeset .highlight,
+.md-typeset pre,
+.md-typeset table,
+.md-typeset blockquote,
+.md-typeset tr,
+.md-typeset img {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
 }
 
 .md-typeset h1, 
@@ -142,86 +75,99 @@ h2.pdf-only,
     page-break-after: avoid !important;
 }
 
-/* Подсвечиваем все блоки примечаний (admonition) легким серым фоном */
+/* 5. ЕДИНАЯ СТИЛИЗАЦИЯ КАРТОЧЕК ADMONITION И DETAILS (СПОЙЛЕРОВ/КАТОВ) */
+
+/* Внешние блоки (адмонишены и каты): цельная серый плашка на ВЕСЬ объем карточки */
 .md-typeset .admonition,
-.md-typeset details.admonition {
-    background-color: #f8fafc !important; /* Нежный нейтральный фон */
-    padding: 16px 20px 16px 20px !important; /* Комфортные внутренние отступы */
-    margin: 1.5em 0 !important;
+.md-typeset details,
+.md-typeset details.admonition,
+.md-typeset details[class*="admonition"] {
+    background-color: #f8fafc !important; /* Приятный единый серый фон */
+    border: 1px solid #e2e8f0 !important; /* Тонкая контурная рамка */
+    border-left: none !important;        /* Без вертик. линий слева */
+    border-radius: 6px !important;
+    margin: 1.2em 0 !important;
+    padding: 14px 18px !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Вложенные адмонишены внутри катов: легкий белый/светлый контраст (выглядят как обычная карточка) */
+.md-typeset .admonition .admonition,
+.md-typeset details .admonition,
+.md-typeset details details {
+    background-color: #ffffff !important; /* Контрастный оттенок второго уровня */
+    border: 1px solid #cbd5e1 !important; 
+    border-left: none !important;        /* Гарантировано без акцентной вертикальной линии */
     border-radius: 4px !important;
-    
-    /* Делаем саму левую линию тоньше и изящнее */
-    border-left-width: 3px !important; 
-}
-
-/* Смягчаем цвета левых полос для разных типов примечаний, чтобы они не были вырвиглазными */
-.md-typeset .admonition.info,
-.md-typeset details.admonition.info {
-    border-left-color: #3b82f6 !important; /* Спокойный, приглушенный синий */
-}
-
-.md-typeset .admonition.warning,
-.md-typeset details.admonition.warning {
-    border-left-color: #f59e0b !important; /* Мягкий янтарный/оранжевый для предупреждений */
-}
-
-.md-typeset .admonition.note,
-.md-typeset details.admonition.note {
-    border-left-color: #06b6d4 !important; /* Приглушенный бирюзовый */
-}
-
-/* Наглухо запрещаем синей линии родительского блока прорезать вложенные элементы */
-.md-typeset .admonition .admonition {
     margin: 1em 0 !important;
-    /* Вложенный блок сам управляет своей левой линией */
+    padding: 12px 16px !important;
 }
 
-/* Сбрасываем лишние внутренние фоны у контента */
+/* Скрываем веб-маркеры и стрелки свертывания */
+.md-typeset details summary::-webkit-details-marker,
+.md-typeset details summary::after,
+.md-typeset details summary .md-details__icon {
+    display: none !important;
+}
+
+.md-typeset details summary {
+    list-style: none !important;
+    cursor: default !important;
+}
+
+/* Сброс внутренних отступов и фонов заголовка/содержимого */
 .md-typeset .admonition-content,
-.md-typeset details.admonition .admonition-content {
+.md-typeset details .admonition-content {
     background: transparent !important;
     padding: 0 !important;
     margin: 0 !important;
 }
 
-/* Полностью убираем внутреннюю плашку под заголовками примечаний */
 .md-typeset .admonition-title,
-.md-typeset details.admonition summary {
+.md-typeset details summary {
     background-color: transparent !important; 
     background: transparent !important;
-    margin: 0 0 12px 0 !important; /* Легкий отступ снизу до текста */
-    border-bottom: none !important;            
-    
-    /* ФИКСАЦИЯ: Сбрасываем веб-масштабирование темы, чтобы кегль не раздувался */
+    margin: 0 0 10px 0 !important;
+    border: none !important;
+    border-bottom: none !important; 
     font-family: "Fira Sans", "Segoe UI", sans-serif !important;
     font-weight: 700 !important;
-    font-size: 1em !important; /* СТАЛО: Жестко 100% от размера текста, без умножения */
+    font-size: 1em !important;
     color: #0f172a !important; 
-    
     display: block !important; 
     position: relative !important;
-    padding: 0 0 0 20px !important; /* Зазор для иконки */
+    padding: 0 0 0 20px !important;
 }
 
-/* ГАРАНТИРОВАННО И ФИКСИРОВАННО СТАВИМ ИКОНКУ НА СВОЕ МЕСТО */
 .md-typeset .admonition-title::before,
-.md-typeset details.admonition summary::before {
+.md-typeset details summary::before {
     position: absolute !important;
     left: 0 !important;
     top: 50% !important;
-    transform: translateY(-50%) !important; /* Строго центрируем иконку по вертикали */
+    transform: translateY(-50%) !important;
     margin: 0 !important;
-    width: 15px !important;  /* Слегка уменьшили под базовый размер текста */
+    width: 15px !important;
     height: 15px !important;
     display: inline-block !important;
 }
 
-/* 5. УМНАЯ ОБРАБОТКА ССЫЛОК */
+/* Блоки кода внутри адмонишенов и катов */
+.md-typeset .admonition .highlight,
+.md-typeset details .highlight,
+.md-typeset .admonition pre,
+.md-typeset details pre {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 4px !important;
+}
+
+/* 6. ССЫЛКИ */
 .md-typeset a[href^="http://"], 
 .md-typeset a[href^="https://"] {
-    color: #1e40af !important; /* СТАЛО: спокойный глубокий синий (вместо #2563eb) */
-    text-decoration: none !important; /* Убираем нижнее подчеркивание, чтобы текст выглядел чище */
-    border-bottom: 1px dashed #cbd5e1 !important; /* Добавляем легкий аккуратный пунктир снизу */
+    color: #1e40af !important;
+    text-decoration: none !important;
+    border-bottom: 1px dashed #cbd5e1 !important;
 }
 
 .md-typeset a[href^="#"] {
@@ -236,7 +182,7 @@ h2.pdf-only,
     cursor: default !important;
 }
 
-/* 6. БАЗОВАЯ ТИПОГРАФИКА И ВЕРСТКА */
+/* 7. ТИПОГРАФИКА */
 body, .md-typeset {
     font-family: "Fira Sans", "Segoe UI", system-ui, -apple-system, sans-serif !important;
     font-size: 10.5pt !important; 
@@ -250,7 +196,7 @@ body, .md-typeset {
     letter-spacing: -0.01em !important;
 }
 
-/* 7. ИНЛАЙН-КОД */
+/* 8. ИНЛАЙН-КОД */
 .md-typeset :not(pre) > code {
     background-color: #f1f5f9 !important;
     color: #0f172a !important;
@@ -261,7 +207,22 @@ body, .md-typeset {
     font-size: 0.85em !important;
 }
 
-/* 8. БЛОКИ КОДА */
+/* 9. БЛОКИ КОДА */
+.md-typeset .highlight,
+.md-typeset pre {
+    background-color: #f8fafc !important;
+    border-radius: 4px !important;
+    margin: 0.8em 0 !important;
+    padding: 0 !important;
+}
+
+.md-typeset .highlight pre,
+.md-typeset pre {
+    padding: 10px 14px !important;
+    margin: 0 !important;
+    overflow: visible !important;
+}
+
 .md-typeset .highlight code,
 .md-typeset pre code {
     font-family: "Fira Code", Consolas, Monaco, monospace !important;
@@ -270,27 +231,28 @@ body, .md-typeset {
     color: #0f172a !important;
     white-space: pre-wrap !important;
     word-break: break-all !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    display: block !important;
 }
 
-/* 9. СТИЛИЗАЦИЯ ГЛАВНОГО ЗАГОЛОВКА ДОКУМЕНТА */
-
-/* Сбрасываем относительный масштаб шрифта темы для печатной версии */
+/* 10. ГЛАВНЫЙ ЗАГОЛОВОК */
 html, body {
     font-size: 10.5pt !important;
 }
 
-/* Задаем жесткий фиксированный размер для H1 на ВСЕХ страницах */
 .md-typeset h1,
 h1 {
     font-family: "Fira Sans", "Segoe UI", sans-serif !important;
     text-align: center !important;  
-    font-size: 28pt !important; /* Теперь этот размер будет строго одинаковым везде */
+    font-size: 28pt !important;
     font-weight: 700 !important;
     line-height: 1.3 !important;
     margin-top: 20px !important;    
     margin-bottom: 80px !important; 
 }
-
 """
 
 class TargetDirectoryHTTPRequestHandler(SimpleHTTPRequestHandler):
@@ -326,11 +288,9 @@ def on_post_build(config):
     )
     server_thread.start()
 
-    # Путь к картинке в скомпилированной папке assets
     svg_local_path = os.path.join(site_dir, "assets", "docio-logo-grey.svg")
     svg_base64_data = ""
 
-    # Пытаемся прочесть файл и закодировать его в Base64 для инъекции
     if os.path.exists(svg_local_path):
         with open(svg_local_path, "rb") as f:
             encoded = base64.b64encode(f.read()).decode("utf-8")
@@ -339,33 +299,23 @@ def on_post_build(config):
         print(f"[PDF Hook] Предупреждение: Локальный логотип {svg_local_path} не найден!")
         svg_base64_data = "https://documentat.io"
 
-    # --- УНИВЕРСАЛЬНЫЙ СКВОЗНОЙ ПОИСК ВСЕХ СТРАНИЦ САЙТА ---
     TARGET_PAGES = []
     
     for root, dirs, files in os.walk(site_dir):
-        # Игнорируем технические директории MkDocs со статикой
         if any(ignored in root for ignored in [os.path.join(site_dir, "assets"), os.path.join(site_dir, "css"), os.path.join(site_dir, "js")]):
             continue
             
         for file in files:
             if file.endswith(".html"):
                 full_html_path = os.path.join(root, file)
+                rel_html_path = os.path.relpath(full_html_path, site_dir).replace(os.sep, '/')
                 
-                # Относительный путь для сервера
-                rel_html_path = os.path.relpath(full_html_path, site_dir)
-                rel_html_path = rel_html_path.replace(os.sep, '/') # Нормализация слэшей под Windows
-                
-                # Исключаем служебные страницы темы
                 if file == "404.html" or "search.html" in rel_html_path:
                     continue
                 
-                # Умное именование PDF
                 if file == "index.html":
                     parent_folder_name = os.path.basename(root)
-                    if root == site_dir:
-                        pdf_filename = "index.pdf"
-                    else:
-                        pdf_filename = f"{parent_folder_name}.pdf"
+                    pdf_filename = "index.pdf" if root == site_dir else f"{parent_folder_name}.pdf"
                 else:
                     pdf_filename = file.replace(".html", ".pdf")
                     
@@ -373,7 +323,6 @@ def on_post_build(config):
 
     print(f"[PDF Hook] Найдено страниц для конвертации: {len(TARGET_PAGES)}")
 
-    # --- АВТОМАТИЧЕСКАЯ ГЕНЕРАЦИЯ ВСЕХ НАЙДЕННЫХ ФАЙЛОВ ---
     try:
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -389,9 +338,15 @@ def on_post_build(config):
                 print(f"[PDF Hook] Генерация PDF: {server_url} -> {pdf_path}")
 
                 page.goto(server_url, wait_until="networkidle")
+                
+                page.evaluate("""() => {
+                    document.querySelectorAll('details').forEach(d => {
+                        d.setAttribute('open', '');
+                    });
+                }""")
+
                 page.add_style_tag(content=CLEAN_PDF_CSS)
                 
-                # Печать: жесткое разделение контента и линии через пустой блок-распорку
                 page.pdf(
                     path=pdf_path,
                     format="A4",
@@ -413,24 +368,17 @@ def on_post_build(config):
                             padding-right: 20mm;
                             margin-top: -5px;
                         ">
-                            <!-- Верхняя строчка с контентом -->
                             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                                <!-- Левая часть: логотип -->
                                 <div style="display: flex; align-items: center;">
                                     <img src="{svg_base64_data}" style="height: 18px; width: auto; display: block;" />
                                 </div>
-                                
-                                <!-- Правая часть: фиксированное название вашего курса -->
                                 <div style="font-weight: 500; display: flex; align-items: center;">
                                     Документируй как инженер: практический курс Docs as Code
                                 </div>
                             </div>
-
-                            <!-- ИСКУССТВЕННЫЙ ОТСТУП И СЕРАЯ ЛИНИЯ -->
                             <div style="height: 10px; width: 100%; border-bottom: 1px solid #f1f5f9;"></div>
                         </div>
                     """,
-                    # ИСПРАВЛЕНИЕ ТУТ: жестко обнуляем размер шрифта и высоту блока подвала
                     footer_template="<div style='font-size: 0px; height: 0px; line-height: 0px;'></div>"
                 )
 

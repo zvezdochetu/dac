@@ -6,6 +6,9 @@ from http.server import SimpleHTTPRequestHandler, HTTPServer
 from playwright.sync_api import sync_playwright
 
 CLEAN_PDF_CSS = """
+/* Явная загрузка шрифтов Fira Sans и Fira Code для Linux-раннеров */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Fira+Sans:wght@400;500;700&display=swap');
+
 /* 1. ПОКАЗЫВАЕМ ЭЛЕМЕНТЫ ТОЛЬКО ДЛЯ PDF */
 .pdf-only {
     display: block !important;
@@ -354,6 +357,9 @@ def on_post_build(config):
 
                 page.add_style_tag(content=CLEAN_PDF_CSS)
                 
+                # Ждем, пока браузер полностью загрузит и применит веб-шрифты
+                page.evaluate("document.fonts.ready")
+
                 page.pdf(
                     path=pdf_path,
                     format="A4",

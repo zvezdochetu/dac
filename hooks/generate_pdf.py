@@ -45,7 +45,7 @@ h2.pdf-only,
     display: none !important;
 }
 
-/* 4. ПРАВИЛА ПЕРЕНОСА СТРАНИЦ (БЕЗ ОБРЕЗАНИЯ СНИЗУ) */
+/* 4. ПРАВИЛА ПЕРЕНОСА СТРАНИЦ */
 .md-typeset details,
 .md-typeset .admonition,
 .md-typeset .admonition-content {
@@ -75,33 +75,27 @@ h2.pdf-only,
     page-break-after: avoid !important;
 }
 
-/* 5. ЕДИНАЯ СТИЛИЗАЦИЯ КАРТОЧЕК ADMONITION И DETAILS (СПОЙЛЕРОВ/КАТОВ) */
-
-/* Внешние блоки (адмонишены и каты): цельная серый плашка на ВЕСЬ объем карточки */
-.md-typeset .admonition,
-.md-typeset details,
-.md-typeset details.admonition,
-.md-typeset details[class*="admonition"] {
-    background-color: #f8fafc !important; /* Приятный единый серый фон */
-    border: 1px solid #e2e8f0 !important; /* Тонкая контурная рамка */
-    border-left: none !important;        /* Без вертик. линий слева */
-    border-radius: 6px !important;
-    margin: 1.2em 0 !important;
-    padding: 14px 18px !important;
-    box-shadow: none !important;
+/* 5. ПОЛНЫЙ СБРОС РАМОК У ОБЫЧНЫХ DETAILS (УБИРАЕМ ЛИШНИЕ ПОЛОСЫ) */
+.md-typeset details {
+    border: none !important;
     outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    margin: 1em 0 !important;
+    padding: 0 !important;
 }
 
-/* Вложенные адмонишены внутри катов: легкий белый/светлый контраст (выглядят как обычная карточка) */
-.md-typeset .admonition .admonition,
-.md-typeset details .admonition,
-.md-typeset details details {
-    background-color: #ffffff !important; /* Контрастный оттенок второго уровня */
-    border: 1px solid #cbd5e1 !important; 
-    border-left: none !important;        /* Гарантировано без акцентной вертикальной линии */
+/* СТИЛИЗУЕМ ТОЛЬКО ПЛАШКИ ПРИМЕЧАНИЙ (ADMONITION) */
+.md-typeset .admonition,
+.md-typeset details.admonition {
+    background-color: #f8fafc !important;
+    padding: 14px 18px !important;
+    margin: 1.2em 0 !important;
     border-radius: 4px !important;
-    margin: 1em 0 !important;
-    padding: 12px 16px !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-left: 3px solid #cbd5e1 !important;
 }
 
 /* Скрываем веб-маркеры и стрелки свертывания */
@@ -116,20 +110,40 @@ h2.pdf-only,
     cursor: default !important;
 }
 
-/* Сброс внутренних отступов и фонов заголовка/содержимого */
+/* Акцентные цвета левой линии */
+.md-typeset .admonition.info,
+.md-typeset details.admonition.info {
+    border-left-color: #3b82f6 !important;
+}
+
+.md-typeset .admonition.warning,
+.md-typeset details.admonition.warning {
+    border-left-color: #f59e0b !important;
+}
+
+.md-typeset .admonition.note,
+.md-typeset details.admonition.note {
+    border-left-color: #06b6d4 !important;
+}
+
+/* Сброс внутренних отступов и фонов плашек */
+.md-typeset .admonition .admonition,
+.md-typeset details.admonition .admonition {
+    margin: 1em 0 !important;
+}
+
 .md-typeset .admonition-content,
-.md-typeset details .admonition-content {
+.md-typeset details.admonition .admonition-content {
     background: transparent !important;
     padding: 0 !important;
     margin: 0 !important;
 }
 
 .md-typeset .admonition-title,
-.md-typeset details summary {
+.md-typeset details.admonition summary {
     background-color: transparent !important; 
     background: transparent !important;
     margin: 0 0 10px 0 !important;
-    border: none !important;
     border-bottom: none !important; 
     font-family: "Fira Sans", "Segoe UI", sans-serif !important;
     font-weight: 700 !important;
@@ -141,7 +155,7 @@ h2.pdf-only,
 }
 
 .md-typeset .admonition-title::before,
-.md-typeset details summary::before {
+.md-typeset details.admonition summary::before {
     position: absolute !important;
     left: 0 !important;
     top: 50% !important;
@@ -150,16 +164,6 @@ h2.pdf-only,
     width: 15px !important;
     height: 15px !important;
     display: inline-block !important;
-}
-
-/* Блоки кода внутри адмонишенов и катов */
-.md-typeset .admonition .highlight,
-.md-typeset details .highlight,
-.md-typeset .admonition pre,
-.md-typeset details pre {
-    background-color: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 4px !important;
 }
 
 /* 6. ССЫЛКИ */
@@ -196,7 +200,7 @@ body, .md-typeset {
     letter-spacing: -0.01em !important;
 }
 
-/* 8. ИНЛАЙН-КОД */
+/* 8. ИНЛАЙН-КОД (ИСХОДНЫЙ СТАБИЛЬНЫЙ СТИЛЬ) */
 .md-typeset :not(pre) > code {
     background-color: #f1f5f9 !important;
     color: #0f172a !important;
@@ -207,7 +211,7 @@ body, .md-typeset {
     font-size: 0.85em !important;
 }
 
-/* 9. БЛОКИ КОДА */
+/* 9. БЛОКИ КОДА (ФИКС ЦЕНТРОВКИ И ВЕРХНЕГО ОТСТУПА) */
 .md-typeset .highlight,
 .md-typeset pre {
     background-color: #f8fafc !important;

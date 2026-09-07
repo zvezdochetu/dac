@@ -151,6 +151,7 @@ h2.pdf-only,
 }
 
 /* 6. ССЫЛКИ */
+/* Внешние ссылки (http/https) — темно-синий цвет с аккуратным пунктиром */
 .md-typeset a[href^="http://"], 
 .md-typeset a[href^="https://"] {
     color: #1e40af !important;
@@ -158,14 +159,18 @@ h2.pdf-only,
     border-bottom: 1px dashed #cbd5e1 !important;
 }
 
+/* Локальные якоря в рамках документа (#) — строгая подсветка без подчеркивания */
 .md-typeset a[href^="#"] {
-    color: #1e293b !important;
+    color: #0284c7 !important;         /* Сдержанный сине-голубой цвет */
     text-decoration: none !important;
+    border-bottom: none !important;
 }
 
-.md-typeset a:not([href^="http://"]):not([href^="https://"]):not([href^="#"]):not([href*="takeaway.pdf"]) {
+/* Межстраничные ссылки (у которых JS удалил href) — полностью сливаются с текстом */
+.md-typeset a:not([href]) {
     color: inherit !important;
     text-decoration: none !important;
+    border-bottom: none !important;
     pointer-events: none !important;
     cursor: default !important;
 }
@@ -361,6 +366,14 @@ def on_post_build(config):
                             if (lineCount <= MAX_UNBROKEN_LINES) {
                                 block.classList.add('no-break');
                             }
+                        }
+                    });
+
+                    // 3. Нейтрализуем межстраничные ссылки (удаляем href, чтобы Chromium не запекал клик)
+                    document.querySelectorAll('a[href]').forEach(a => {
+                        const href = a.getAttribute('href').trim();
+                        if (!href.startsWith('http://') && !href.startsWith('https://') && !href.startsWith('#')) {
+                            a.removeAttribute('href');
                         }
                     });
                 }""")

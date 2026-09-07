@@ -51,8 +51,11 @@ h2.pdf-only,
 /* 4. ПРАВИЛА ПЕРЕНОСА СТРАНИЦ */
 .md-typeset details,
 .md-typeset .admonition,
-.md-typeset .admonition-content {
-    break-inside: auto !important;
+.md-typeset .admonition-content,
+.md-typeset .highlight,
+.md-typeset pre,
+.md-typeset .highlight pre {
+    break-inside: auto !important;       /* Разрешаем коду переноситься между страницами */
     page-break-inside: auto !important;
     overflow: visible !important;
     height: auto !important;
@@ -60,8 +63,6 @@ h2.pdf-only,
     min-height: 0 !important;
 }
 
-.md-typeset .highlight,
-.md-typeset pre,
 .md-typeset table,
 .md-typeset blockquote,
 .md-typeset tr,
@@ -76,6 +77,13 @@ h2.pdf-only,
 .md-typeset h4 {
     break-after: avoid !important;
     page-break-after: avoid !important;
+}
+
+/* Предотвращаем разрезание отдельных строк кода пополам на границе страниц */
+.md-typeset pre code line,
+.md-typeset .highlight pre span {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
 }
 
 /* 5. ПОЛНЫЙ СБРОС РАМОК У ОБЫЧНЫХ DETAILS (УБИРАЕМ ЛИШНИЕ ПОЛОСЫ) */

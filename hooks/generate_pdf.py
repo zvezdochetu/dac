@@ -100,95 +100,59 @@ h2.pdf-only,
     page-break-after: avoid !important;
 }
 
-/* 5. ПОЛНЫЙ СБРОС РАМОК У ОБЫЧНЫХ DETAILS (УБИРАЕМ ЛИШНИЕ ПОЛОСЫ) */
-.md-typeset details {
+/* 5. СТИЛИЗАЦИЯ БЛОКОВ ПРИМЕЧАНИЙ (ADMONITIONS / DETAILS) */
+
+/* 5.1. Примечания и советы (!!!) — строгий стиль с левой линией */
+.md-typeset .admonition {
     border: none !important;
-    outline: none !important;
+    border-left: 3px solid #cbd5e1 !important; /* Светлая серая линия */
+    background-color: transparent !important;
     box-shadow: none !important;
-    background: transparent !important;
-    margin: 1em 0 !important;
-    padding: 0 !important;
+    padding: 0 0 0 12px !important;            /* Отступ от линии до внутреннего текста */
+    margin: 1.2em 0 1.2em 2px !important;      /* Сдвиг всей линии на 2px вправо */
+    border-radius: 0 !important;
 }
 
-/* СТИЛИЗУЕМ ТОЛЬКО ПЛАШКИ ПРИМЕЧАНИЙ (ADMONITION) */
-.md-typeset .admonition,
-.md-typeset details.admonition {
-    background-color: #f8fafc !important;
-    padding: 14px 18px !important;
-    margin: 1.2em 0 !important;
-    border-radius: 4px !important;
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
-    border-left: 3px solid #cbd5e1 !important;
-}
-
-/* Скрываем веб-маркеры и стрелки свертывания */
-.md-typeset details summary::-webkit-details-marker,
-.md-typeset details summary::after,
-.md-typeset details summary .md-details__icon {
-    display: none !important;
-}
-
-.md-typeset details summary {
-    list-style: none !important;
-    cursor: default !important;
-}
-
-/* Акцентные цвета левой линии */
-.md-typeset .admonition.info,
-.md-typeset details.admonition.info {
-    border-left-color: #3b82f6 !important;
-}
-
-.md-typeset .admonition.warning,
-.md-typeset details.admonition.warning {
-    border-left-color: #f59e0b !important;
-}
-
-.md-typeset .admonition.note,
-.md-typeset details.admonition.note {
-    border-left-color: #06b6d4 !important;
-}
-
-/* Сброс внутренних отступов и фонов плашек */
-.md-typeset .admonition .admonition,
-.md-typeset details.admonition .admonition {
-    margin: 1em 0 !important;
-}
-
-.md-typeset .admonition-content,
-.md-typeset details.admonition .admonition-content {
-    background: transparent !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-.md-typeset .admonition-title,
-.md-typeset details.admonition summary {
-    background-color: transparent !important; 
-    background: transparent !important;
-    margin: 0 0 10px 0 !important;
-    border-bottom: none !important; 
-    font-family: "Fira Sans", "Segoe UI", sans-serif !important;
-    font-weight: 700 !important;
-    font-size: 1em !important;
-    color: #0f172a !important; 
-    display: block !important; 
+/* Заголовок с точным местом под иконку */
+.md-typeset .admonition-title {
     position: relative !important;
-    padding: 0 0 0 20px !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 0 6px 2em !important;           /* 2em слева освобождают место под иконку */
+    margin: 0 !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
 }
 
-.md-typeset .admonition-title::before,
-.md-typeset details.admonition summary::before {
+/* Точная привязка иконки слева от текста */
+.md-typeset .admonition-title::before {
     position: absolute !important;
     left: 0 !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
+    top: 0 !important;
     margin: 0 !important;
-    width: 15px !important;
-    height: 15px !important;
-    display: inline-block !important;
+}
+
+/* Контент внутри примечания */
+.md-typeset .admonition > .admonition-content {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* 5.2. Раскрывающийся спойлер (???) — лаконичная карточка */
+.md-typeset details {
+    border: 1px solid #e2e8f0 !important;      /* Аккуратная тонкая рамка */
+    background-color: #f8fafc !important;      /* Светлая подложка */
+    border-radius: 6px !important;
+    margin: 1.2em 0 !important;
+    padding: 12px 16px !important;
+    box-shadow: none !important;
+}
+
+.md-typeset summary {
+    font-weight: 600 !important;
+    color: #0f172a !important;
+    background-color: transparent !important;
 }
 
 /* 6. ССЫЛКИ */

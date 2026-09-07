@@ -203,12 +203,13 @@ body, .md-typeset {
     font-size: 10.5pt !important; 
     line-height: 1.6 !important;
     color: #1e293b !important;
-    text-rendering: optimizeLegibility !important;
+    /* geometricPrecision отключает микро-подгонку ширины букв в Skia */
+    text-rendering: geometricPrecision !important;
     -webkit-font-smoothing: antialiased !important;
     font-kerning: normal !important;
 }
 
-/* Отмена выравнивания по ширине только для параграфов, списков и таблиц */
+/* Фиксация нулевого трекинга для Linux Chromium */
 .md-typeset p,
 .md-typeset li,
 .md-typeset li span,
@@ -217,8 +218,8 @@ body, .md-typeset {
 .md-typeset th {
     text-align: left !important;
     text-align-last: left !important;
-    letter-spacing: normal !important;
-    word-spacing: normal !important;
+    letter-spacing: 0px !important; /* 0px вместо normal жестко запечатывает интервалы */
+    word-spacing: 0px !important;   /* 0px вместо normal */
     text-justify: none !important;
 }
 

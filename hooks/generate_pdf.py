@@ -102,57 +102,52 @@ h2.pdf-only,
 
 /* 5. СТИЛИЗАЦИЯ БЛОКОВ ПРИМЕЧАНИЙ (ADMONITIONS / DETAILS) */
 
-/* 5.1. Примечания и советы (!!!) — строгий стиль с левой линией */
+/* 5.1. Все советы и примечания (!!!) — строгий стиль с левой серой линией */
 .md-typeset .admonition {
     border: none !important;
     border-left: 3px solid #cbd5e1 !important; /* Светлая серая линия */
-    background-color: transparent !important;
-    box-shadow: none !important;
-    padding: 0 0 0 12px !important;            /* Отступ от линии до внутреннего текста */
-    margin: 1.2em 0 1.2em 2px !important;      /* Сдвиг всей линии на 2px вправо */
+    background-color: transparent !important; /* Полностью прозрачный фон */
+    box-shadow: none !important;               /* Без теней */
+    padding: 0 0 0 12px !important;            /* Отступ от линии */
+    margin: 1.2em 0 1.2em 2px !important;      /* Сдвиг линии на 2px вправо */
     border-radius: 0 !important;
 }
 
-/* Заголовок с точным местом под иконку */
+/* Удаляем фоновую плашку под заголовком совета, НЕ вмешиваясь в позиционирование иконки */
 .md-typeset .admonition-title {
-    position: relative !important;
     background-color: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    padding: 0 0 6px 2em !important;           /* 2em слева освобождают место под иконку */
-    margin: 0 !important;
-    color: #0f172a !important;
-    font-weight: 700 !important;
+    margin-bottom: 0.5em !important;
 }
 
-/* Точная привязка иконки слева от текста */
-.md-typeset .admonition-title::before {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    margin: 0 !important;
+/* Убираем лишние верхние отступы у текста внутри совета */
+.md-typeset .admonition > .admonition-content,
+.md-typeset .admonition > p {
+    margin-top: 0 !important;
 }
 
-/* Контент внутри примечания */
-.md-typeset .admonition > .admonition-content {
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-/* 5.2. Раскрывающийся спойлер (???) — лаконичная карточка */
+/* 5.2. Спойлеры (???) — лаконичные карточки */
 .md-typeset details {
-    border: 1px solid #e2e8f0 !important;      /* Аккуратная тонкая рамка */
-    background-color: #f8fafc !important;      /* Светлая подложка */
+    border: 1px solid #e2e8f0 !important;
+    background-color: #f8fafc !important;
     border-radius: 6px !important;
     margin: 1.2em 0 !important;
     padding: 12px 16px !important;
     box-shadow: none !important;
 }
 
-.md-typeset summary {
+.md-typeset details > summary {
+    background-color: transparent !important;
     font-weight: 600 !important;
     color: #0f172a !important;
-    background-color: transparent !important;
+}
+
+/* Точечное изменение: Полностью скрываем стрелочку раскрытия (chevron) справа у спойлеров */
+.md-typeset details > summary::after,
+.md-typeset details > summary::-webkit-details-marker {
+    display: none !important;
+    content: none !important;
 }
 
 /* 6. ССЫЛКИ */

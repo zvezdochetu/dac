@@ -51,16 +51,37 @@ h2.pdf-only,
 /* 4. ПРАВИЛА ПЕРЕНОСА СТРАНИЦ */
 .md-typeset details,
 .md-typeset .admonition,
-.md-typeset .admonition-content,
-.md-typeset .highlight,
-.md-typeset pre,
-.md-typeset .highlight pre {
-    break-inside: auto !important;       /* Разрешаем коду переноситься между страницами */
+.md-typeset .admonition-content {
+    break-inside: auto !important;
     page-break-inside: auto !important;
     overflow: visible !important;
     height: auto !important;
     max-height: none !important;
     min-height: 0 !important;
+}
+
+/* Блоки кода по умолчанию (от 6 строк) могут переноситься между страницами */
+.md-typeset .highlight,
+.md-typeset pre,
+.md-typeset .highlight pre {
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+    overflow: visible !important;
+    height: auto !important;
+}
+
+/* Короткие блоки кода (до 5 строк) держим целиком */
+.md-typeset .highlight.no-break,
+.md-typeset .highlight.no-break pre {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+}
+
+/* Не даем разрезать отдельные строки кода пополам на границе страниц */
+.md-typeset pre code line,
+.md-typeset .highlight pre span {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
 }
 
 .md-typeset table,
@@ -77,13 +98,6 @@ h2.pdf-only,
 .md-typeset h4 {
     break-after: avoid !important;
     page-break-after: avoid !important;
-}
-
-/* Предотвращаем разрезание отдельных строк кода пополам на границе страниц */
-.md-typeset pre code line,
-.md-typeset .highlight pre span {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
 }
 
 /* 5. ПОЛНЫЙ СБРОС РАМОК У ОБЫЧНЫХ DETAILS (УБИРАЕМ ЛИШНИЕ ПОЛОСЫ) */
@@ -375,8 +389,20 @@ def on_post_build(config):
                 page.goto(server_url, wait_until="networkidle")
                 
                 page.evaluate("""() => {
-                    document.querySelectorAll('details').forEach(d => {
-                        d.setAttribute('open', '');
+                    // 1. Раскрываем спойлеры
+                    document.querySelectorAll('details').forEach(d => d.setAttribute('open', ''));
+
+                    // 2. Порог: блоки до 5 строк держим целиком, от 6 строк — разрешаем переносить
+                    const MAX_UNBROKEN_LINES = 5;
+
+                    document.querySelectorAll('.md-typeset .highlight').forEach(block => {
+                        const code = block.querySelector('code');
+                        if (code) {
+                            const lineCount = code.innerText.trim().split('\\n').length;
+                            if (lineCount <= MAX_UNBROKEN_LINES) {
+                                block.classList.add('no-break');
+                            }
+                        }
                     });
                 }""")
 

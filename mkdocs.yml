@@ -36,9 +36,9 @@ nav:
   - Модуль 4: module-4.md
   - Памятки по итогам курса:
       # Команды Git: takeaway/git.md
-        Проекты для первого опыта: takeaway/first-step.md
-        Синтаксис Markdown: takeaway/md.md
-        Конвертация в docs, pdf и confluence: takeaway/pdf-docx-conf.md
+      - Проекты для первого опыта: takeaway/first-step.md
+      - Синтаксис Markdown: takeaway/md.md
+      - docs, pdf и confluence: takeaway/pdf-docx-conf.md
 
 markdown_extensions:
   - admonition                  # Блоки внимания (выноски)

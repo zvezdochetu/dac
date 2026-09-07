@@ -1,11 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-  {# 1. АВТОМАТИЧЕСКИЙ РАСЧЕТ ПУТИ К PDF #}
-  {% set src_file = page.file.src_path.split('/')[-1] %}
+
+  {# 1. КАРДИНАЛЬНЫЙ РАСЧЕТ ИМЕНИ ФАЙЛА #}
+  {% set clean_src_path = page.file.src_path.replace('\\', '/') %}
+  {% set path_parts = clean_src_path.split('/') %}
+  {% set src_file = path_parts[-1] %}
+
   {% if src_file == "index.md" %}
-    {% if page.file.src_path.split('/')|length > 1 %}
-      {% set pdf_name = page.file.src_path.split('/')[-2] ~ ".pdf" %}
+    {% if path_parts|length > 1 %}
+      {% set pdf_name = path_parts[-2] ~ ".pdf" %}
     {% else %}
       {% set pdf_name = "index.pdf" %}
     {% endif %}
@@ -13,21 +17,27 @@
     {% set pdf_name = src_file.replace('.md', '.pdf') %}
   {% endif %}
 
-  {# 2. ВЫВОДИМ ТЕКСТ СТАТЬИ (только ваш оригинальный H1 из Markdown) #}
+  {# 2. СБОРКА АБСОЛЮТНОГО ПУТИ ОТ КОРНЯ САЙТА #}
+  {# page.url всегда возвращает путь от корня сайта до текущей папки (например, 'takeaway/first-step/') #}
+  {# Если вы добавите /v1/ в MkDocs, page.url сам начнет возвращать 'v1/takeaway/first-step/' #}
+  {% set pdf_path = '/' ~ page.url ~ pdf_name %}
+
+  {# 3. ВЫВОДИМ ТЕКСТ СТАТЬИ #}
   {{ page.content }}
 
-  {# 3. АККУРАТНЫЙ СКРУГЛЕННЫЙ БЕЙДЖ С ПРЕЖНИМ СИНИМ ЦВЕТОМ #}
+  {# 4. АККУРАТНЫЙ СКРУГЛЕННЫЙ БЕЙДЖ С ПРЕЖНИМ СИНИМ ЦВЕТОМ #}
   <div id="pdf-badge-container" class="no-pdf" style="display: none; margin-top: 15px; margin-bottom: 30px;">
-    <a href="{{ pdf_name }}" target="_blank" style="
+    {# Мы используем чистый абсолютный путь без фильтра | url, так как сами собрали его идеально #}
+    <a href="{{ pdf_path }}" target="_blank" style="
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background-color: #3f51b5; /* Возвращен ваш прежний фирменный синий/индиго цвет */
-        color: #ffffff;            /* Белый текст */
+        background-color: #3f51b5; 
+        color: #ffffff;            
         font-size: 11px;
         font-weight: 500;
-        padding: 5px 14px;         /* Компактные отступы */
-        border-radius: 20px;       /* Оставляем аккуратное скругление бейджа */
+        padding: 5px 14px;         
+        border-radius: 20px;       
         text-decoration: none;
         transition: background-color 0.2s ease;
     " onmouseover="this.style.backgroundColor='#303f9f';" 
@@ -36,7 +46,7 @@
     </a>
   </div>
 
-  {# 4. ПЕРЕМЕЩЕНИЕ БЕЙДЖА ПОД ВАШ H1 #}
+  {# 5. ПЕРЕМЕЩЕНИЕ БЕЙДЖА ПОД ВАШ H1 #}
   <script>
     document.addEventListener("DOMContentLoaded", function() {
         const h1 = document.querySelector(".md-content h1");

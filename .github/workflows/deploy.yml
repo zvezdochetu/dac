@@ -33,7 +33,7 @@ jobs:
       - name: Install system fonts for PDF rendering
         run: |
           sudo apt-get update
-          sudo apt-get install -y fonts-fira-sans fonts-fira-code fontconfig
+          sudo apt-get install -y fonts-fira fonts-firacode fontconfig
           fc-cache -fv
 
       # 1. Сборка сайта MkDocs

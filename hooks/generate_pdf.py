@@ -187,11 +187,14 @@ h2.pdf-only,
 }
 
 /* 7. ТИПОГРАФИКА */
-body, .md-typeset {
+body, .md-typeset, .md-typeset p, .md-typeset li {
     font-family: "Fira Sans", "Segoe UI", system-ui, -apple-system, sans-serif !important;
     font-size: 10.5pt !important; 
     line-height: 1.6 !important;
     color: #1e293b !important;
+    text-align: left !important;       /* Отменяет выравнивание по ширине */
+    letter-spacing: normal !important; /* Сбрасывает растяжение букв */
+    word-spacing: normal !important;   /* Возвращает естественные пробелы */
 }
 
 .md-typeset h1, .md-typeset h2, .md-typeset h3 {

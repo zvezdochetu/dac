@@ -30,11 +30,14 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install system fonts for PDF rendering
+      - name: Install Fira fonts for PDF rendering
         run: |
-          sudo apt-get update
-          sudo apt-get install -y fonts-fira fonts-firacode fontconfig
-          fc-cache -fv
+          sudo mkdir -p /usr/local/share/fonts/truetype/fira
+          sudo curl -fLo /usr/local/share/fonts/truetype/fira/FiraSans-Regular.ttf https://github.com/google/fonts/raw/main/ofl/firasans/FiraSans-Regular.ttf
+          sudo curl -fLo /usr/local/share/fonts/truetype/fira/FiraSans-Medium.ttf https://github.com/google/fonts/raw/main/ofl/firasans/FiraSans-Medium.ttf
+          sudo curl -fLo /usr/local/share/fonts/truetype/fira/FiraSans-Bold.ttf https://github.com/google/fonts/raw/main/ofl/firasans/FiraSans-Bold.ttf
+          sudo curl -fLo /usr/local/share/fonts/truetype/fira/FiraCode.ttf https://github.com/google/fonts/raw/main/ofl/firacode/FiraCode%5Bwght%5D.ttf
+          sudo fc-cache -fv
 
       # 1. Сборка сайта MkDocs
       - name: Install dependencies & Build MkDocs
